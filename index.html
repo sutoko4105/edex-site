@@ -138,6 +138,14 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .shots.wide img { aspect-ratio: 4 / 3; }
 .shots.tall img { aspect-ratio: 4 / 5; }
 .swipe { margin: 0; padding: 8px 20px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--muted); border-bottom: 1px solid var(--line); }
+/* photo galleries: arrow buttons for mouse users (phones keep swiping) */
+.gallery { position: relative; }
+.gallery .nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(242,242,240,0.35); background: rgba(10,10,10,0.6); color: var(--fg); font-family: var(--mono); font-size: 18px; line-height: 1; cursor: pointer; display: none; align-items: center; justify-content: center; transition: opacity 0.2s, border-color 0.2s; }
+.gallery .nav:hover { border-color: var(--fg); }
+.gallery .nav.prev { left: 10px; }
+.gallery .nav.next { right: 10px; }
+.gallery .nav:disabled { opacity: 0; pointer-events: none; }
+@media (hover: hover) and (pointer: fine) { .gallery .nav { display: flex; } }
 .card-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
 .meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .date { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; color: var(--muted); }
@@ -541,6 +549,31 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
       if (location.hash === '#en' || location.hash === '#ja') { try { history.replaceState(null, '', '#' + l); } catch (e) {} }
     });
   });
+  /* ---------- photo galleries: ← → buttons so mouse users can change photos ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll('.shots'), function (s) {
+    if (s.querySelectorAll('img').length < 2) return;
+    var wrap = document.createElement('div'); wrap.className = 'gallery';
+    s.parentNode.insertBefore(wrap, s); wrap.appendChild(s);
+    function button(dir) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'nav ' + (dir < 0 ? 'prev' : 'next');
+      b.setAttribute('data-label-ja', dir < 0 ? '前の写真' : '次の写真');
+      b.setAttribute('data-label-en', dir < 0 ? 'Previous photo' : 'Next photo');
+      b.innerHTML = '<span aria-hidden="true">' + (dir < 0 ? '←' : '→') + '</span>';
+      b.addEventListener('click', function () { s.scrollBy({ left: dir * s.clientWidth, behavior: reduce ? 'auto' : 'smooth' }); });
+      wrap.appendChild(b);
+      return b;
+    }
+    var prev = button(-1), next = button(1);
+    function sync() {
+      var x = s.scrollLeft, end = s.scrollWidth - s.clientWidth - 2;
+      prev.disabled = x <= 2; next.disabled = x >= end;
+    }
+    s.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  });
+
   applyLang(root.getAttribute('data-lang') || 'ja');
 
   /* ---------- scroll stage ---------- */
