@@ -1,0 +1,1142 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Tap Lab 練習ビュー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=IBM+Plex+Mono:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one to-scale side drawing (white line art on black, like the EDEX mark) is the hero; a narrow instrument column sits beside it on desktop and below it on phones */
+:root{
+  --bg:#08090a; --sheet:#0b0d0f; --ink:#eceee9; --ink-2:#8e9794; --rule:#1f2528; --rule-2:#323a3f;
+  --grid:#121619; --grid-2:#1b2226; --accent:#8ca6ff; --accent-soft:#17203c; --accent-ink:#08090a;
+  --est:#e3b75e; --est-bg:#29210f; --meas:#77ca9a; --meas-bg:#10241a;
+  --f-display:"Dela Gothic One","Zen Kaku Gothic New","Hiragino Sans",system-ui,sans-serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:12px 48px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 20px;padding-block:4px 14px;border-bottom:1px solid var(--rule);margin-bottom:16px}
+.brand{font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;color:var(--ink-2);text-transform:uppercase}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(23px,5.6vw,30px);line-height:1.2;margin:2px 0 0;letter-spacing:.03em;text-wrap:balance}
+.top-r{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.status{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:12.5px;color:var(--ink-2)}
+.seg.lang button{font-family:var(--f-body);font-size:12.5px;min-height:32px;padding-inline:10px}
+.chip{font-family:var(--f-mono);font-size:11.5px;font-weight:500;padding:2px 9px;border-radius:999px;background:var(--est-bg);color:var(--est);white-space:nowrap}
+.chip.ok{background:var(--meas-bg);color:var(--meas)}
+
+.layout{display:grid;gap:24px}
+@media (min-width:920px){
+  .layout{grid-template-columns:minmax(0,1.18fr) minmax(0,1fr);align-items:start;gap:32px}
+  .stage{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+  .sheet{width:min(100%, calc((100vh - 390px) / 0.92));min-width:min(100%, 360px);margin-inline:auto}
+}
+.stage,.side{min-width:0}
+.side{display:grid;gap:26px}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:var(--ink-2);text-transform:uppercase;margin:0 0 6px}
+
+.focus{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.focus button{min-height:42px;border:1px solid var(--rule-2);border-radius:6px;background:var(--sheet);font-weight:700;font-size:15px;cursor:pointer}
+.focus button:hover{border-color:var(--ink-2)}
+.focus button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.cue{font-size:16.5px;font-weight:500;line-height:1.62;margin:10px 0 12px;min-height:3.3em;text-wrap:pretty;max-width:46em}
+.cue b{color:var(--accent);font-weight:700}
+
+.sheet{position:relative;aspect-ratio:1/0.92;max-width:100%;background:var(--sheet);border:1px solid var(--rule-2);border-radius:4px;overflow:hidden;cursor:pointer}
+.sheet canvas{display:block;width:100%;height:100%}
+.sheet-meta{position:absolute;top:8px;left:10px;right:10px;display:grid;gap:1px;pointer-events:none;font-size:12px}
+.phase{font-weight:700;color:var(--ink)}
+.phase .t{font-family:var(--f-mono);font-weight:400;color:var(--ink-2);margin-left:6px;font-variant-numeric:tabular-nums}
+.phase .t{white-space:nowrap}
+.scale{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-2);white-space:nowrap}
+
+.transport{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.tgroup{display:flex;gap:8px;align-items:center}
+.btn{min-height:40px;padding:6px 12px;border-radius:6px;border:1px solid var(--rule-2);background:var(--sheet);font-size:14px;cursor:pointer;line-height:1.3}
+.btn:hover{border-color:var(--ink-2)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:700;min-width:6.6em}
+.btn.toggle[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);font-weight:700}
+.btn.icon{width:40px;padding:0;font-family:var(--f-mono);font-size:18px}
+.seg{display:inline-flex;border:1px solid var(--rule-2);border-radius:6px;overflow:hidden;background:var(--sheet)}
+.seg button{min-height:38px;padding:4px 11px;border:0;border-right:1px solid var(--rule);background:transparent;font-family:var(--f-mono);font-size:13.5px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:600}
+.seg.wide{display:grid;grid-auto-flow:column;grid-auto-columns:1fr}
+.seg.wide button{font-family:var(--f-body);font-size:13px}
+.scrub{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;margin-top:10px}
+.scrub-mid{min-width:0}
+.scrub input{width:100%;accent-color:var(--accent);margin:0}
+.ticks{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-2);margin-top:2px}
+.poses{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
+.poses .btn{font-size:13px;padding-inline:6px}
+.note{font-size:12.5px;color:var(--ink-2);margin:10px 0 0;max-width:60ch}
+
+.readouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.ro{padding:9px 11px 10px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);min-width:0}
+.ro dt{font-size:12px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ro dd{margin:1px 0 0;font-family:var(--f-mono);font-size:12.5px;color:var(--ink-2);white-space:nowrap}
+.ro dd b{font-size:22px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.ro.hot dt{color:var(--accent);font-weight:700}
+.ro.hot dd b{color:var(--accent)}
+
+.panel h2{font-size:17px;font-weight:700;margin:0 0 4px;letter-spacing:.02em;padding-top:14px;border-top:1px solid var(--rule-2)}
+.lede{font-size:13.5px;color:var(--ink-2);margin:0 0 12px;max-width:62ch}
+
+.trainer{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 16px;padding:14px;border:1px solid var(--rule-2);border-radius:6px;background:var(--sheet)}
+.tr-state{font-size:13px;color:var(--ink-2);font-weight:500}
+.tr-count{font-family:var(--f-mono);font-size:36px;line-height:1.05;font-variant-numeric:tabular-nums}
+.tr-of{font-size:16px;color:var(--ink-2)}
+.tr-sides{display:flex;gap:6px;margin-top:6px}
+.tr-sides span{font-size:12px;padding:2px 12px;border-radius:999px;border:1px solid var(--rule-2);color:var(--ink-2)}
+.tr-sides span.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.trainer .btn.primary{min-height:56px;min-width:6em;font-size:16px}
+.field{display:grid;gap:6px;margin-top:12px}
+.field .lab{font-size:13px;font-weight:500}
+.check{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:12px}
+.check input{accent-color:var(--accent);width:18px;height:18px}
+.vol{display:grid;grid-template-columns:auto minmax(0,1fr) 3.2em;gap:10px;align-items:center;font-size:13px;margin-top:10px}
+.vol input{width:100%;accent-color:var(--accent)}
+.vol output{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);text-align:right}
+
+.param{padding-block:12px;border-bottom:1px solid var(--rule)}
+.param-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.param-head label,.param-head .plab{font-weight:700;font-size:14.5px}
+.param-head output{font-family:var(--f-mono);font-size:14px;font-variant-numeric:tabular-nums}
+.param-ctl{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;gap:8px;align-items:center;margin-top:4px}
+.param-ctl input{width:100%;accent-color:var(--accent);margin:0}
+.param-foot{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-top:4px}
+.help{font-size:12.5px;color:var(--ink-2);min-width:0;margin:0}
+.meas{display:inline-flex;gap:6px;align-items:center;font-size:12.5px;white-space:nowrap;cursor:pointer}
+.meas input{accent-color:var(--meas);width:17px;height:17px}
+details.helper{margin-top:10px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet)}
+details.helper summary{cursor:pointer;padding:8px 12px;font-size:13px;font-weight:500}
+.helper-body{padding:2px 12px 12px;display:grid;gap:8px}
+.helper-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
+.helper-row input,.helper-row select{font-family:var(--f-mono);font-size:14px;padding:6px 8px;border:1px solid var(--rule-2);border-radius:5px;background:var(--bg);width:6.2em}
+.helper-out{font-size:14px;margin:0}
+.helper-out b{font-family:var(--f-mono);font-size:18px}
+.hchart{display:block;width:100%;max-width:420px;height:auto;margin-top:10px}
+.hchart text{font-family:var(--f-mono);font-size:10px;fill:var(--ink-2)}
+.hchart .jp{font-family:var(--f-body);font-size:10.5px}
+.amp-res{font-size:13.5px;margin:8px 0 0;max-width:62ch}
+.amp-res b{color:var(--accent)}
+.reset{margin-top:12px}
+
+details.notes summary{cursor:pointer;font-weight:700;font-size:15px;padding-top:14px;border-top:1px solid var(--rule-2)}
+details.notes ul{padding-left:1.2em;font-size:13.5px;color:var(--ink-2);max-width:66ch;margin:10px 0 0}
+details.notes li{margin-bottom:6px}
+details.notes a{color:var(--accent)}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+.back-edex{display:inline-flex;align-items:center;min-height:36px;margin-bottom:4px;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--ink-2);text-decoration:none}
+.back-edex:hover{color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <a class="back-edex" href="./">← EDEX Kendama</a>
+  <header class="top">
+    <div>
+      <div class="brand">EDEX Tap Lab · Practice View</div>
+      <h1 data-t="h1">タップ練習ビュー</h1>
+    </div>
+    <div class="top-r">
+      <div class="seg lang" id="lang" role="group" aria-label="言語 / Language">
+        <button type="button" data-l="ja" lang="ja">日本語</button><button type="button" data-l="en" lang="en">EN</button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="stage" data-ta="aria_stage" aria-label="側面図">
+      <p class="eyebrow" data-t="eyebrow">今回見るのはひとつだけ</p>
+      <div class="focus" id="focus">
+        <button type="button" data-f="ball" data-t="f_ball">玉</button>
+        <button type="button" data-f="spike" data-t="f_spike">剣先</button>
+        <button type="button" data-f="cup" data-t="f_cup">中皿</button>
+        <button type="button" data-f="cog" data-t="f_cog">重心</button>
+      </div>
+      <p class="cue" id="cue"></p>
+
+      <div class="sheet" id="sheet" tabindex="0" data-ta="aria_sheet" aria-label="側面図。タップで再生と一時停止、左右キーでコマ送り">
+        <canvas id="cv" role="img" data-ta="aria_canvas" aria-label="タップ中のけんと玉の側面図。縮尺どおり"></canvas>
+        <div class="sheet-meta">
+          <div class="phase" id="phase">接触</div>
+          <div class="scale" data-t="scale">縮尺どおり · 方眼 1 cm · PLAKENの写真から</div>
+        </div>
+      </div>
+
+      <div class="transport">
+        <div class="tgroup">
+          <button type="button" class="btn primary" id="play">一時停止</button>
+          <div class="seg" id="speeds" role="group" data-ta="aria_speed" aria-label="再生速度">
+            <button type="button" data-s="1">1×</button>
+            <button type="button" data-s="0.5">½×</button>
+            <button type="button" data-s="0.25">¼×</button>
+            <button type="button" data-s="0.125">⅛×</button>
+          </div>
+        </div>
+        <div class="tgroup">
+          <button type="button" class="btn toggle" id="snd" aria-pressed="false" data-t="snd">接触音</button>
+          <button type="button" class="btn toggle" id="gh" aria-pressed="true" data-t="gh">残像</button>
+        </div>
+      </div>
+      <div class="scrub">
+        <button type="button" class="btn icon" id="back" data-ta="aria_back" aria-label="少し戻す">‹</button>
+        <div class="scrub-mid">
+          <input type="range" id="scrub" min="0" max="200" step="0.5" value="0" data-ta="aria_scrub" aria-label="1往復の中の位置">
+          <div class="ticks" aria-hidden="true"><span data-t="tick_c">接触</span><span data-t="tick_t">真上</span><span data-t="tick_c">接触</span><span data-t="tick_t">真上</span><span data-t="tick_c">接触</span></div>
+        </div>
+        <button type="button" class="btn icon" id="fwd" data-ta="aria_fwd" aria-label="少し進める">›</button>
+      </div>
+      <div class="poses">
+        <button type="button" class="btn" data-p="0" data-t="pose0">① 接触</button>
+        <button type="button" class="btn" data-p="0.5" data-t="pose1">② 中皿が真上</button>
+        <button type="button" class="btn" data-p="1" data-t="pose2">③ 反対で接触</button>
+      </div>
+      <p class="note" data-t="note">スロー再生は同じ動きを遅く見せるだけ。実物でテンポを落とすと、けんはもっと高く上がる別の動きになる。</p>
+    </section>
+
+    <aside class="side">
+      <dl class="readouts" id="readouts">
+        <div class="ro" data-for="spike"><dt data-t="ro_T">1回の間隔</dt><dd><b id="roT">—</b> ms</dd></div>
+        <div class="ro" data-for="cog"><dt data-t="ro_H">重心の上下</dt><dd><b id="roH">—</b> cm</dd></div>
+        <div class="ro" data-for="cup"><dt data-t="ro_Rot">けんが回る</dt><dd><b id="roRot">—</b> <span data-t="u_rot">°/回</span></dd></div>
+        <div class="ro" data-for="ball"><dt data-t="ro_W">打点の幅</dt><dd><b id="roW">—</b> cm</dd></div>
+        <div class="ro" data-for="ball spike"><dt data-t="ro_D">玉がくぐる</dt><dd><b id="roD">—</b> <span data-t="u_D">cm〜</span></dd></div>
+        <div class="ro" data-for="ball"><dt data-t="ro_V">玉の平均の速さ</dt><dd><b id="roV">—</b> m/s</dd></div>
+      </dl>
+
+      <section class="panel" aria-labelledby="h-rhythm">
+        <h2 id="h-rhythm" data-t="h_rhythm">聴いて合わせる</h2>
+        <p class="lede" data-t="lede_rhythm">練習中は実物を見るので、頼れるのは音。予告音4回（1往復ごと）のあと、接触のリズムが鳴る。回数は進行の表示で、成功は判定しない。</p>
+        <div class="trainer" aria-live="polite">
+          <div>
+            <div class="tr-state" id="trState">待機中</div>
+            <div class="tr-count"><span id="trNow">0</span><span class="tr-of"> / <span id="trN">8</span></span></div>
+            <div class="tr-sides"><span id="trL" data-t="tr_L">左</span><span id="trR" data-t="tr_R">右</span></div>
+          </div>
+          <button type="button" class="btn primary" id="trBtn">開始</button>
+        </div>
+        <div class="field">
+          <span class="lab" id="lab-target" data-t="lab_target">目標の接触回数</span>
+          <div class="seg wide" id="targets" role="group" aria-labelledby="lab-target">
+            <button type="button" data-n="4">4</button><button type="button" data-n="6">6</button><button type="button" data-n="8">8</button><button type="button" data-n="10">10</button><button type="button" data-n="20">20</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lab" id="lab-guide" data-t="lab_guide">お手本の音</span>
+          <div class="seg wide" id="guides" role="group" aria-labelledby="lab-guide">
+            <button type="button" data-g="all" data-t="g_all">全部鳴らす</button><button type="button" data-g="first2" data-t="g_first2">最初の2回</button><button type="button" data-g="none" data-t="g_none">予告だけ</button>
+          </div>
+        </div>
+        <label class="check"><input type="checkbox" id="trLoop"> <span data-t="loop">5秒休んで繰り返す</span></label>
+        <div class="vol"><label for="vol" data-t="vol">音量</label><input type="range" id="vol" min="0" max="100" step="1"><output id="volOut" for="vol">50%</output></div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-calib">
+        <h2 id="h-calib" data-t="h_calib">自分の値に合わせる</h2>
+        <p class="lede" data-t="lede_calib">初期値は参考動画（60 fps、他の人のタップ）から読んだ値と、形からの計算値。自分の動画と定規で測った値に置き換えるほど、図が自分のタップに近づく。測ったものには「実測」を付けておく。</p>
+
+        <div class="param">
+          <div class="param-head"><label for="inBpm" data-t="l_bpm">テンポ（1拍＝1接触）</label><output id="outBpm" for="inBpm"></output></div>
+          <div class="param-ctl">
+            <button type="button" class="btn icon step" data-k="bpm" data-d="-1" data-ta="a_bpm_dn" aria-label="テンポを下げる">−</button>
+            <input type="range" id="inBpm" min="120" max="480" step="1">
+            <button type="button" class="btn icon step" data-k="bpm" data-d="1" data-ta="a_bpm_up" aria-label="テンポを上げる">＋</button>
+          </div>
+          <div class="param-foot"><p class="help" id="helpBpm"></p><label class="meas"><input type="checkbox" id="mBpm"> <span data-t="meas">実測</span></label></div>
+          <svg class="hchart" id="hchart" viewBox="0 0 320 132" role="img" data-ta="a_hchart" aria-label="テンポと重心の上下幅の関係"></svg>
+          <details class="helper">
+            <summary data-t="helper_sum">動画のフレーム数から求める</summary>
+            <div class="helper-body">
+              <div class="helper-row"><label for="fps" data-t="l_fps">撮影 fps</label>
+                <select id="fps"><option value="30">30</option><option value="60">60</option><option value="120">120</option><option value="240">240</option></select></div>
+              <div class="helper-row"><label for="frames" data-t="l_frames">接触から次の接触まで</label><input type="number" id="frames" min="1" step="0.1" inputmode="decimal"> <span data-t="u_frames">フレーム</span></div>
+              <p class="helper-out">→ <b id="fBpm">—</b> bpm (<span id="fMs">—</span> ms)</p>
+              <button type="button" class="btn" id="useF" data-t="useF">このテンポを使う</button>
+              <p class="help" data-t="help_frames">10回分の接触間をまとめて数えて10で割ると誤差が減る。bpm = 60 × fps ÷ フレーム数。再生速度を変えた動画には使えない。</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="param">
+          <div class="param-head"><label for="inTilt" data-t="l_tilt">接触時の傾き</label><output id="outTilt" for="inTilt"></output></div>
+          <div class="param-ctl">
+            <button type="button" class="btn icon step" data-k="tilt" data-d="-1" data-ta="a_tilt_dn" aria-label="傾きを減らす">−</button>
+            <input type="range" id="inTilt" min="0" max="40" step="1">
+            <button type="button" class="btn icon step" data-k="tilt" data-d="1" data-ta="a_tilt_up" aria-label="傾きを増やす">＋</button>
+          </div>
+          <div class="param-foot"><p class="help" data-t="help_tilt">動画を接触の瞬間で止め、けんの軸と水平の角度を読む。打たれる側が下がっている角度。</p><label class="meas"><input type="checkbox" id="mTilt"> <span data-t="meas">実測</span></label></div>
+        </div>
+
+        <div class="param">
+          <div class="param-head"><label for="inLen" data-t="l_len">けんの全長</label><output id="outLen" for="inLen"></output></div>
+          <div class="param-ctl">
+            <button type="button" class="btn icon step" data-k="len" data-d="-1" data-ta="a_len_dn" aria-label="全長を減らす">−</button>
+            <input type="range" id="inLen" min="140" max="200" step="1">
+            <button type="button" class="btn icon step" data-k="len" data-d="1" data-ta="a_len_up" aria-label="全長を増やす">＋</button>
+          </div>
+          <div class="param-foot"><p class="help" data-t="help_len">中皿の底から剣先の先端まで。最近の主流は165 mm前後。</p><label class="meas"><input type="checkbox" id="mLen"> <span data-t="meas">実測</span></label></div>
+        </div>
+
+        <div class="param">
+          <div class="param-head"><label for="inCg" data-t="l_cg">けんの重心</label><output id="outCg" for="inCg"></output></div>
+          <div class="param-ctl">
+            <button type="button" class="btn icon step" data-k="cg" data-d="-1" data-ta="a_cg_dn" aria-label="重心を中皿側へ">−</button>
+            <input type="range" id="inCg" min="42" max="112" step="1">
+            <button type="button" class="btn icon step" data-k="cg" data-d="1" data-ta="a_cg_up" aria-label="重心を剣先側へ">＋</button>
+          </div>
+          <div class="param-foot"><p class="help" id="helpCg"></p><label class="meas"><input type="checkbox" id="mCg"> <span data-t="meas">実測</span></label></div>
+        </div>
+
+        <div class="param">
+          <div class="param-head"><label for="inSw" data-t="l_sw">皿胴の幅</label><output id="outSw" for="inSw"></output></div>
+          <div class="param-ctl">
+            <button type="button" class="btn icon step" data-k="sw" data-d="-1" data-ta="a_sw_dn" aria-label="皿胴の幅を減らす">−</button>
+            <input type="range" id="inSw" min="60" max="100" step="1">
+            <button type="button" class="btn icon step" data-k="sw" data-d="1" data-ta="a_sw_up" aria-label="皿胴の幅を増やす">＋</button>
+          </div>
+          <div class="param-foot"><p class="help" data-t="help_sw">大皿の縁から小皿の縁まで。初期値75 mmはPLAKENの実測値。図の横方向の縮尺はこの値で決まる。</p><label class="meas"><input type="checkbox" id="mSw"> <span data-t="meas">実測</span></label></div>
+        </div>
+
+        <div class="param">
+          <div class="param-head"><label for="inAmp" data-t="l_amp">重心の上下（動画で実測）</label><output id="outAmp" for="inAmp"></output></div>
+          <div class="helper-row" style="margin-top:6px"><input type="number" id="inAmp" min="0" step="1" inputmode="decimal" data-tp="ph_amp" placeholder="例 15"> mm</div>
+          <p class="help" style="margin-top:6px" data-t="help_amp">重心の位置に小さな丸シールを貼り、同じ動画でシールの一番上と一番下の差を測る。テンポもこの動画から入れておく。</p>
+          <p class="amp-res" id="ampRes"></p>
+        </div>
+        <button type="button" class="btn reset" id="reset" data-t="reset">初期値に戻す</button>
+      </section>
+
+      <details class="notes">
+        <summary data-t="notes_sum">この図が仮定していること</summary>
+        <ul id="notes" data-th="notes"></ul>
+      </details>
+    </aside>
+  </main>
+</div>
+
+<script>
+(() => {
+'use strict';
+const G = 9806.65;          // mm/s^2
+const RB = 30;              // tama radius, mm (JKA 60 mm)
+const MARGIN = 8;           // clearance added to the drawn ball path, mm
+const BASE_L = 165;         // PLAKEN outline is stored at this length
+// PLAKEN front outline traced from the product photo: [u from the chusara bottom, r sideways] in mm.
+// Bottom corrected for the photo's ~30° downward view; stripes as bands; markers from the photo (blue = CoG, red = hit point).
+const PLAKEN = {"poly":[[165.0,-0.46],[164.34,-1.78],[163.29,-2.7],[161.44,-3.76],[159.2,-4.55],[120.56,-4.55],[119.5,-5.34],[119.25,-6.26],[119.77,-9.04],[121.22,-13.13],[123.46,-17.21],[125.44,-19.84],[128.34,-22.75],[130.85,-24.73],[131.9,-24.98],[133.09,-25.91],[134.41,-26.44],[134.94,-27.23],[134.94,-29.87],[134.14,-31.05],[133.88,-31.98],[134.14,-32.9],[134.8,-33.56],[134.41,-39.23],[134.01,-40.03],[132.03,-41.74],[130.32,-42.53],[125.96,-43.85],[117.93,-45.03],[109.75,-45.3],[101.83,-44.77],[93.4,-43.32],[87.99,-41.47],[85.48,-39.89],[84.43,-38.57],[84.03,-36.73],[83.91,-32.77],[84.57,-32.24],[84.82,-31.19],[84.69,-30.53],[83.64,-28.82],[83.64,-26.44],[84.03,-26.05],[90.63,-25.91],[93.0,-25.25],[94.32,-24.59],[97.08,-22.22],[98.01,-20.9],[98.94,-18.66],[99.2,-17.34],[99.2,-14.97],[98.15,-11.67],[97.22,-10.22],[94.58,-7.58],[92.35,-6.13],[70.59,-7.85],[61.88,-9.04],[54.63,-10.35],[50.28,-11.54],[46.32,-13.25],[44.74,-14.57],[43.82,-16.15],[41.71,-16.15],[37.89,-14.7],[34.05,-13.91],[28.65,-13.77],[26.14,-14.04],[22.45,-14.84],[20.34,-15.63],[1.49,-20.5],[0.0,-20.5],[0.0,20.64],[1.09,20.64],[19.81,15.75],[23.77,14.43],[26.68,13.91],[34.05,13.91],[38.01,14.7],[41.97,16.15],[43.69,16.15],[45.66,13.77],[47.9,12.47],[51.99,11.01],[56.34,9.95],[62.27,8.9],[72.3,7.58],[91.28,6.0],[92.6,6.13],[95.11,7.85],[97.08,9.83],[98.15,11.41],[99.2,14.7],[99.06,18.13],[98.67,19.59],[96.96,22.48],[95.37,24.07],[93.53,25.25],[90.23,26.3],[84.3,26.3],[83.64,26.7],[83.64,29.21],[84.57,30.79],[84.69,31.45],[84.43,32.5],[83.77,33.03],[84.03,38.17],[84.57,39.49],[85.62,40.55],[88.12,42.0],[91.15,43.05],[95.51,44.11],[104.74,45.3],[115.16,45.42],[124.78,44.37],[130.58,42.79],[132.56,41.87],[134.14,40.55],[134.67,39.49],[134.94,33.82],[134.28,33.3],[134.01,32.24],[134.28,31.32],[135.07,30.39],[135.07,27.89],[134.14,26.7],[132.56,26.05],[129.0,23.41],[125.96,20.37],[123.46,17.07],[121.09,12.59],[119.91,9.29],[119.25,6.13],[119.5,5.21],[120.56,4.42],[159.33,4.55],[161.97,3.49],[164.07,2.04],[165.0,0.6]],"bands":[[[134.54,-38.17],[134.67,-36.6],[134.67,-34.75],[84.03,-34.75],[84.17,-36.6],[84.3,-38.17]],[[134.8,34.75],[134.8,36.6],[134.8,38.44],[84.17,38.44],[84.03,36.6],[83.91,34.75]],[[7.2,-20.2],[7.2,20.2],[4.5,20.2],[4.5,-20.2]]],"U_CG":85,"U_HIT":10.3,"R_HIT":18.13,"SLOPE":-0.26,"U_SAR":112.4,"SW":90.8};
+const CROSS = 0.6;          // when the ball passes the centre (fraction of the interval), read from the reference video
+const DIP_SEEN = 20;        // how far the ball sinks between contacts in the reference video, mm
+const CG_DEFAULT = PLAKEN.U_CG;   // blue marker on the photo
+const SW_DEFAULT = 75;                // measured on the real PLAKEN (photo alone gave ~91 mm)
+
+const DEF = {bpm:360,tilt:25,len:165,cg:CG_DEFAULT,sw:SW_DEFAULT,amp:null,focus:'ball',speed:0.25,ghosts:true,sound:false,vol:0.5,
+             meas:{bpm:false,tilt:false,len:false,cg:false,sw:true},target:8,guide:'first2',loop:true,fps:120,frames:20};
+const KEY = 'edex-taplab-practice-v5';
+/* ---------- language: every visible string, Japanese and English ---------- */
+const LKEY = 'edex-taplab-lang';
+const STR = {
+ja: {
+  title: 'Tap Lab 練習ビュー',
+  h1: 'タップ練習ビュー',
+  aria_stage: '側面図',
+  eyebrow: '今回見るのはひとつだけ',
+  f_ball: '玉', f_spike: '剣先', f_cup: '中皿', f_cog: '重心',
+  aria_sheet: '側面図。タップで再生と一時停止、左右キーでコマ送り',
+  aria_canvas: 'タップ中のけんと玉の側面図。縮尺どおり',
+  scale: '縮尺どおり · 方眼 1 cm · PLAKENの写真から',
+  aria_speed: '再生速度', snd: '接触音', gh: '残像',
+  aria_back: '少し戻す', aria_fwd: '少し進める', aria_scrub: '1往復の中の位置',
+  tick_c: '接触', tick_t: '真上',
+  pose0: '① 接触', pose1: '② 中皿が真上', pose2: '③ 反対で接触',
+  note: 'スロー再生は同じ動きを遅く見せるだけ。実物でテンポを落とすと、けんはもっと高く上がる別の動きになる。',
+  ro_T: '1回の間隔', ro_H: '重心の上下', ro_Rot: 'けんが回る', u_rot: '°/回',
+  ro_W: '打点の幅', ro_D: '玉がくぐる', u_D: 'cm〜', ro_V: '玉の平均の速さ',
+  h_rhythm: '聴いて合わせる',
+  lede_rhythm: '練習中は実物を見るので、頼れるのは音。予告音4回（1往復ごと）のあと、接触のリズムが鳴る。回数は進行の表示で、成功は判定しない。',
+  tr_L: '左', tr_R: '右',
+  lab_target: '目標の接触回数', lab_guide: 'お手本の音',
+  g_all: '全部鳴らす', g_first2: '最初の2回', g_none: '予告だけ',
+  loop: '5秒休んで繰り返す', vol: '音量',
+  h_calib: '自分の値に合わせる',
+  lede_calib: '初期値は参考動画（60 fps、他の人のタップ）から読んだ値と、形からの計算値。自分の動画と定規で測った値に置き換えるほど、図が自分のタップに近づく。測ったものには「実測」を付けておく。',
+  meas: '実測',
+  l_bpm: 'テンポ（1拍＝1接触）', a_bpm_dn: 'テンポを下げる', a_bpm_up: 'テンポを上げる',
+  a_hchart: 'テンポと重心の上下幅の関係',
+  helper_sum: '動画のフレーム数から求める', l_fps: '撮影 fps', l_frames: '接触から次の接触まで', u_frames: 'フレーム',
+  useF: 'このテンポを使う',
+  help_frames: '10回分の接触間をまとめて数えて10で割ると誤差が減る。bpm = 60 × fps ÷ フレーム数。再生速度を変えた動画には使えない。',
+  l_tilt: '接触時の傾き', a_tilt_dn: '傾きを減らす', a_tilt_up: '傾きを増やす',
+  help_tilt: '動画を接触の瞬間で止め、けんの軸と水平の角度を読む。打たれる側が下がっている角度。',
+  l_len: 'けんの全長', a_len_dn: '全長を減らす', a_len_up: '全長を増やす',
+  help_len: '中皿の底から剣先の先端まで。最近の主流は165 mm前後。',
+  l_cg: 'けんの重心', a_cg_dn: '重心を中皿側へ', a_cg_up: '重心を剣先側へ',
+  l_sw: '皿胴の幅', a_sw_dn: '皿胴の幅を減らす', a_sw_up: '皿胴の幅を増やす',
+  help_sw: '大皿の縁から小皿の縁まで。初期値75 mmはPLAKENの実測値。図の横方向の縮尺はこの値で決まる。',
+  l_amp: '重心の上下（動画で実測）', ph_amp: '例 15',
+  help_amp: '重心の位置に小さな丸シールを貼り、同じ動画でシールの一番上と一番下の差を測る。テンポもこの動画から入れておく。',
+  reset: '初期値に戻す',
+  notes_sum: 'この図が仮定していること',
+  notes: `<li>形はPLAKENの正面写真の輪郭をそのままなぞったもの。高さは165 mm（仮置き）。横は実測の3つの幅（剣先10 mm、中皿の一番太い所42 mm、皿胴75 mm）に合うように写真の幅を補正した。写真では皿胴だけが約2割大きく写っていて、一律の倍率では3つが同時に合わない。写真は画像加工で魚眼のような歪みが入っている可能性があり、高さ方向の位置（皿胴、重心、打点）にも数mmの誤差がありうる。中皿の底が楕円に写っていた（上からの撮影か加工による歪み）ので、そこだけ平らな底に直した。黒い帯は写真の線の位置。</li>
+<li>重心は写真の青い印（中皿の底から約85 mm、真ん中から約2.5 mm皿胴寄り）。打点は赤い印（中皿の側面、底から約1 cm）。印は表面に付いているので、上からの撮影角度のぶん位置を補正している。</li>
+<li>参考動画（別の人のけん玉）では、自由落下に一番合う点が皿胴から中皿へ向かって約3割の位置で、PLAKENの青い印（約2.4割）と近い。</li>
+<li>テンポ360 bpmは参考動画から読んだ値（接触は10コマごと、60 fps）。傾きは動画の見かけで約25〜40°だが、カメラが回転面の真横にないと大きく見えるので25°を仮置き。玉が中央を通るタイミング（接触間の6割）も同じ動画から。</li>
+<li>けんは接触と接触の間、重力だけで飛ぶ。紐と空気は無視。毎回同じ高さに戻る。玉が一瞬で当たるなら、重心の上下は gT²/8 で決まる。</li>
+<li>回転は一定の速さで、接触ごとに向きが反転する。1回で回る角度は 180° + 傾き × 2。</li>
+<li>玉は中皿の真下から当たる。通り道は左右対称の弧で、打った側ではゆっくり動き、接触間の6割の時点で中央（一番低い所）を通る（参考動画のタイミング）。「くぐる深さ」はこの通り方で剣先に当たらない最小値。図の経路はそこに 8 mm の余裕を足し、参考動画で見えた沈み込み 2 cm より浅くはしない。玉の穴は下向き、紐と手は描いていない。</li>
+<li>重心の上下の実測から出す接触時間は、玉が触れている間の力が一定という仮定での計算。上下幅 = g × T × 空中の時間 ÷ 8。</li>
+<li>この図で扱っていないもの：質量、反発係数、力積、個体差。</li>`,
+  play: '再生', pause: '一時停止', start: '開始', stop: '停止',
+  ready: '待機中', no_audio: 'このブラウザでは音を鳴らせない', get_ready: '準備',
+  count: i => `予告 ${i} / 4`, follow: 'お手本に合わせる', own: '自分で続ける',
+  rest: n => `休憩 あと ${n} 秒`, done: '完了。もう一度なら開始', stopped: '条件を変えたので止めた',
+  names: {bpm:'テンポ', tilt:'傾き', len:'全長', cg:'重心', sw:'皿胴の幅'}, sep: '・',
+  st_meas: (n, t) => `実測 ${n}/${t}`, st_ph: list => `仮置き：${list}`, st_all: 'すべて実測の値で描いている',
+  ph_contact: '接触', ph_top: '中皿が真上・剣先が真下', ph_rise: '回りながら上昇', ph_fall: '下降・次の打点へ',
+  help_bpm: (a, b) => `1回 ${a} ms・1往復 ${b} ms`,
+  out_cg: v => `中皿の底から ${v} mm`,
+  help_cg: v => `けん（玉なし）を指の上で水平に釣り合わせ、その点を中皿の底から測る。初期値${v} mmは写真の青い印の位置（真ん中より少し皿胴寄り）。`,
+  not_entered: '未入力',
+  amp_none: p => `今のテンポだと、玉が一瞬で当たる場合の予測は <b>${p} mm</b>。シールの上下がこれよりはっきり小さければ、玉がけんに触れている時間が長い。`,
+  amp_big: (a, p) => `実測 ${a} mm は予測 ${p} mm より大きい。テンポの測り違いか、毎回同じ高さに戻らず上下にふらついている可能性。`,
+  amp_match: (a, p) => `実測 ${a} mm と予測 ${p} mm がほぼ一致。玉は一瞬当たって離れている。止まって見えるのは、上下が小さくて速いから。`,
+  amp_small: (a, p, r, tc, rc, T) => `実測 ${a} mm は予測 ${p} mm の ${r}%。接触時間で説明すると、1回 ${T} ms のうち玉がけんに触れているのは約 <b>${tc} ms（${rc}%）</b>。叩くより「支えて運ぶ」に近い。`,
+  chart_x: 'テンポ (bpm) → 重心の上下', chart_half: v => `半分のテンポ ${v}`,
+  c_base: '接触時の重心の高さ', c_width: v => `打点の幅 ${v} cm`, c_min: v => `最低 ${v} cm`,
+  c_down: v => `真下 ${v} ms`, c_pass: 'ここですれ違う', c_per: v => `1回で ${v}°`, c_hit: '打点（側面）',
+  c_sar: v => `皿胴の中心 上下 ${v} cm`, c_cog: v => `重心 上下 ${v} cm`,
+  cue_ball_no: 'この条件では、玉が剣先に当たらずに反対へ回る経路が見つからない。傾きか重心を見直す。',
+  cue_ball_flat: (D, W) => `玉は打った側でしばらくゆっくり動き、剣先が真下を過ぎてから、約 <b>${D} cm</b> 沈む弧で <b>${W} cm</b> 横の打点へ。この条件なら深くくぐらなくても剣先には当たらない。`,
+  cue_ball_dip: (Dm, W) => `玉は打った側でしばらくゆっくり動き、剣先が真下を過ぎてから反対側へ抜ける。打点から <b>${Dm} cm 以上</b>下をくぐって、<b>${W} cm</b> 横の打点へ。`,
+  cue_spike: t => `剣先は玉と逆向きに回る。真下に来るのは接触から <b>${t} ms</b> 後。玉はその直後に、剣先の下を反対側へ抜ける。`,
+  cue_cup: (tilt, hu, rot) => `中皿は真上を越えて、玉と同じ向きに反対側へ。水平より <b>${tilt}°</b> 下がった所で、底から約 <b>${hu} cm</b> の側面に玉が当たる。1回で <b>${rot}°</b>。`,
+  cue_cog: (h, sr) => `重心は <b>${h} cm</b> 上下する（玉が一瞬で当たる場合）。止まって見えるのは皿胴のほう。重心が上がる分だけ回転で皿胴が下がるので、皿胴の高さは <b>${sr} cm</b> しか変わらない。`,
+  cue_amp: a => ` 動画の実測は <b>${a} cm</b>。`
+},
+en: {
+  title: 'Tap Lab Practice View',
+  h1: 'Tap Practice View',
+  aria_stage: 'Side view',
+  eyebrow: 'Watch just one thing',
+  f_ball: 'Tama', f_spike: 'Spike', f_cup: 'Base cup', f_cog: 'CoG',
+  aria_sheet: 'Side view. Tap to play or pause, arrow keys to step frame by frame',
+  aria_canvas: 'To-scale side view of the ken and tama during a tap',
+  scale: 'To scale · 1 cm grid · traced from a PLAKEN photo',
+  aria_speed: 'Playback speed', snd: 'Sound', gh: 'Ghosts',
+  aria_back: 'Step back', aria_fwd: 'Step forward', aria_scrub: 'Position within one round trip',
+  tick_c: 'Contact', tick_t: 'Top',
+  pose0: '① Contact', pose1: '② Base cup up', pose2: '③ Other side',
+  note: 'Slow playback shows the same motion, only slower. Slowing the tempo on a real kendama is a different motion: the ken flies much higher.',
+  ro_T: 'Interval', ro_H: 'CoG rise', ro_Rot: 'Ken turns', u_rot: '°/tap',
+  ro_W: 'Hit width', ro_D: 'Min dip', u_D: 'cm', ro_V: 'Tama speed',
+  h_rhythm: 'Practice by ear',
+  lede_rhythm: 'While you practice you are watching the real kendama, so sound is what you can rely on. Four count-in beeps (one per round trip), then the contact rhythm. The counter only shows progress; it does not detect whether you landed it.',
+  tr_L: 'Left', tr_R: 'Right',
+  lab_target: 'Target contacts', lab_guide: 'Guide sound',
+  g_all: 'Every tap', g_first2: 'First 2', g_none: 'Count-in only',
+  loop: 'Repeat after a 5 s rest', vol: 'Volume',
+  h_calib: 'Match it to your own tap',
+  lede_calib: 'The defaults come from a reference video (60 fps, someone else’s tap) and from the shape itself. The more you replace them with values measured from your own video and a ruler, the closer the drawing gets to your tap. Tick “Measured” on anything you have measured.',
+  meas: 'Measured',
+  l_bpm: 'Tempo (1 beat = 1 contact)', a_bpm_dn: 'Slower', a_bpm_up: 'Faster',
+  a_hchart: 'How tempo sets the CoG rise',
+  helper_sum: 'Work it out from video frames', l_fps: 'Video fps', l_frames: 'Contact to next contact', u_frames: 'frames',
+  useF: 'Use this tempo',
+  help_frames: 'Count the frames across 10 contacts and divide by 10 to cut the error. bpm = 60 × fps ÷ frames. Do not use a video whose playback speed has been changed.',
+  l_tilt: 'Tilt at contact', a_tilt_dn: 'Less tilt', a_tilt_up: 'More tilt',
+  help_tilt: 'Pause the video at the moment of contact and read the angle between the ken’s axis and horizontal, with the struck side tipped down.',
+  l_len: 'Ken length', a_len_dn: 'Shorter', a_len_up: 'Longer',
+  help_len: 'From the bottom of the base cup to the tip of the spike. Around 165 mm is common these days.',
+  l_cg: 'Ken CoG', a_cg_dn: 'Move CoG toward the base cup', a_cg_up: 'Move CoG toward the spike',
+  l_sw: 'Sarado width', a_sw_dn: 'Narrower', a_sw_up: 'Wider',
+  help_sw: 'From the big-cup rim to the small-cup rim. The default 75 mm is measured on a real PLAKEN. It sets the sideways scale of the drawing.',
+  l_amp: 'CoG rise (measured on video)', ph_amp: 'e.g. 15',
+  help_amp: 'Put a small round sticker on the CoG and measure the gap between its highest and lowest points in the video. Take the tempo from the same video.',
+  reset: 'Reset to defaults',
+  notes_sum: 'What this drawing assumes',
+  notes: `<li>The shape is traced from the outline of a front-on PLAKEN photo. Length is 165 mm (a placeholder). Widths are corrected so three measured widths come out right: spike 10 mm, thickest part of the base cup 42 mm, sarado 75 mm. In the photo only the sarado came out about 20% too wide, so no single scale fits all three. The photo may carry a fisheye-like distortion from image editing, so the heights of the sarado, CoG and hit point may be off by a few mm. The bottom of the base cup showed as an ellipse (high camera angle or editing), so only that part was flattened. The dark bands are the stripes in the photo.</li>
+<li>The CoG is the blue mark on the photo (about 85 mm from the bottom of the base cup, about 2.5 mm toward the sarado from the middle). The hit point is the red mark (side of the base cup, about 1 cm from the bottom). The marks sit on the surface, so their positions are corrected for the high camera angle.</li>
+<li>In the reference video (someone else’s kendama), the point that best follows free fall sits about 30% of the way from the sarado to the base cup, close to PLAKEN’s blue mark (about 24%).</li>
+<li>The 360 bpm tempo is read from the reference video (a contact every 10 frames at 60 fps). Tilt looks like 25–40° in the video, but it reads larger when the camera is not square to the plane of rotation, so 25° is a placeholder. The moment the tama passes the center (60% of the interval) comes from the same video.</li>
+<li>Between contacts the ken flies under gravity alone. String and air are ignored, and it returns to the same height every time. If the tama touches only for an instant, the CoG rise is gT²/8.</li>
+<li>The ken spins at a constant rate and reverses at each contact. It turns 180° + 2 × tilt per contact.</li>
+<li>The tama hits from under the base cup. Its path is a symmetric arc: it moves slowly on the struck side and passes the center, the lowest point, at 60% of the interval (the timing seen in the reference video). “Min dip” is the smallest dip that keeps the tama clear of the spike on this path. The drawn path adds 8 mm of margin and never dips less than the 2 cm seen in the reference video. The tama’s hole faces down; the string and hand are not drawn.</li>
+<li>The contact time worked out from a measured CoG rise assumes a constant force while the tama is touching. Rise = g × T × time in the air ÷ 8.</li>
+<li>Not modeled here: mass, coefficient of restitution, impulse and specimen-to-specimen variation.</li>`,
+  play: 'Play', pause: 'Pause', start: 'Start', stop: 'Stop',
+  ready: 'Ready', no_audio: 'This browser cannot play sound', get_ready: 'Get ready',
+  count: i => `Count-in ${i} / 4`, follow: 'Follow the guide', own: 'Keep it going yourself',
+  rest: n => `Rest: ${n} s`, done: 'Done. Press Start to go again', stopped: 'Stopped because a setting changed',
+  names: {bpm:'tempo', tilt:'tilt', len:'length', cg:'CoG', sw:'sarado width'}, sep: ', ',
+  st_meas: (n, t) => `Measured ${n}/${t}`, st_ph: list => `Placeholders: ${list}`, st_all: 'Drawn entirely from measured values',
+  ph_contact: 'Contact', ph_top: 'Base cup up, spike down', ph_rise: 'Rising and turning', ph_fall: 'Falling to the next hit',
+  help_bpm: (a, b) => `${a} ms per contact · ${b} ms per round trip`,
+  out_cg: v => `${v} mm from base-cup bottom`,
+  help_cg: v => `Balance the ken (without the tama) level on one finger and measure that point from the bottom of the base cup. The default ${v} mm is the blue mark on the photo, slightly toward the sarado from the middle.`,
+  not_entered: 'Not entered',
+  amp_none: p => `At this tempo, if the tama touches only for an instant, the predicted rise is <b>${p} mm</b>. If the sticker moves clearly less than this, the tama stays in contact with the ken for longer.`,
+  amp_big: (a, p) => `Measured ${a} mm is more than the predicted ${p} mm. Either the tempo is off, or the ken is not returning to the same height each time.`,
+  amp_match: (a, p) => `Measured ${a} mm roughly matches the predicted ${p} mm. The tama hits briefly and leaves. The ken only looks still because the rise is small and fast.`,
+  amp_small: (a, p, r, tc, rc, T) => `Measured ${a} mm is ${r}% of the predicted ${p} mm. In terms of contact time, the tama touches the ken for about <b>${tc} ms (${rc}%)</b> of every ${T} ms. That is closer to carrying than hitting.`,
+  chart_x: 'tempo (bpm) → CoG rise', chart_half: v => `half tempo ${v}`,
+  c_base: 'CoG height at contact', c_width: v => `Hit width ${v} cm`, c_min: v => `min ${v} cm`,
+  c_down: v => `Down at ${v} ms`, c_pass: 'They cross here', c_per: v => `${v}° per tap`, c_hit: 'Hit point (side)',
+  c_sar: v => `Sarado rise ${v} cm`, c_cog: v => `CoG rise ${v} cm`,
+  cue_ball_no: 'With these settings there is no path for the tama to swing across without hitting the spike. Check the tilt or the CoG.',
+  cue_ball_flat: (D, W) => `The tama lingers on the struck side, then, once the spike has passed straight down, swings <b>${W} cm</b> across to the next hit point along an arc about <b>${D} cm</b> deep. With these settings it does not need to dip deep to clear the spike.`,
+  cue_ball_dip: (Dm, W) => `The tama lingers on the struck side, then slips across once the spike has passed straight down. It must dip at least <b>${Dm} cm</b> below the hit point and travel <b>${W} cm</b> across.`,
+  cue_spike: t => `The spike swings the opposite way to the tama. It points straight down <b>${t} ms</b> after contact, and right after that the tama slips under it to the other side.`,
+  cue_cup: (tilt, hu, rot) => `The base cup swings over the top to the other side, the same way the tama goes. With the ken tipped <b>${tilt}°</b> below horizontal, the tama hits its side about <b>${hu} cm</b> up from the bottom. <b>${rot}°</b> per tap.`,
+  cue_cog: (h, sr) => `The CoG rises <b>${h} cm</b> (if the tama touches only for an instant). What looks still is the sarado: as the CoG rises, the spin lowers the sarado by about the same amount, so the sarado’s height changes by only <b>${sr} cm</b>.`,
+  cue_amp: a => ` Measured on video: <b>${a} cm</b>.`
+}
+};
+function initLang(){
+  const h = (location.hash || '').slice(1).toLowerCase();
+  if (h === 'en' || h === 'ja') return h;
+  try { const s = localStorage.getItem(LKEY); if (s === 'en' || s === 'ja') return s; } catch(e) {}
+  return /^ja\b/i.test(navigator.language || '') ? 'ja' : 'en';
+}
+let LANG = initLang();
+const L = (key, ...a) => { const v = (STR[LANG] && key in STR[LANG]) ? STR[LANG][key] : STR.ja[key]; return typeof v === 'function' ? v(...a) : v; };
+
+function load(){
+  let s = {};
+  try { s = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(e) { s = {}; }
+  const o = Object.assign({}, DEF, s);
+  o.meas = Object.assign({}, DEF.meas, s.meas || {});
+  return o;
+}
+let S = load();
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} }
+
+const $ = id => document.getElementById(id);
+const cm = (mm, d=1) => (mm/10).toFixed(d);
+const msr = s => Math.round(s*1000);
+const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+/* ---------- shape (local coords: u from chusara bottom, r sideways) ---------- */
+// length scales u. Sideways, the photo is remapped so three measured widths come out right:
+// spike 10 mm, thickest part of the base 42 mm, sarado (cup rim to cup rim) = sw. The close-up photo
+// inflated the off-axis cups, so one uniform factor cannot fit all three.
+const RMAP_PHOTO = [0, 4.55, 20.6, 45.42];   // half-widths in the traced outline
+const RMAP_REAL  = [0, 5.0, 21.0];           // measured: spike 10 mm, base 42 mm
+function makeShape(L, sw){
+  const ku = L/BASE_L, real = RMAP_REAL.concat([sw/2]);
+  const segOf = a => { let i = 1; while (i < RMAP_PHOTO.length-1 && a > RMAP_PHOTO[i]) i++; return i; };
+  const rm = r => { const a = Math.abs(r), i = segOf(a);
+    const t = (a - RMAP_PHOTO[i-1]) / (RMAP_PHOTO[i] - RMAP_PHOTO[i-1]);
+    return Math.sign(r) * (real[i-1] + t*(real[i] - real[i-1])); };
+  const drm = r => { const i = segOf(Math.abs(r)); return (real[i] - real[i-1]) / (RMAP_PHOTO[i] - RMAP_PHOTO[i-1]); };
+  const sc = pts => pts.map(([u,r]) => [u*ku, rm(r)]);
+  return {outline: sc(PLAKEN.poly), bands: PLAKEN.bands.map(sc), us: PLAKEN.U_SAR*ku,
+          uHit: PLAKEN.U_HIT*ku, rHit: rm(PLAKEN.R_HIT), slope: PLAKEN.SLOPE*drm(PLAKEN.R_HIT)/ku};
+}
+
+function polyDist(px, py, poly){ // signed distance, negative inside
+  let inside = false, md = Infinity;
+  for (let i=0, j=poly.length-1; i<poly.length; j=i++){
+    const xi=poly[i][0], yi=poly[i][1], xj=poly[j][0], yj=poly[j][1];
+    if (((yi>py)!==(yj>py)) && (px < (xj-xi)*(py-yi)/(yj-yi)+xi)) inside = !inside;
+    const ex=xi-xj, ey=yi-yj, wx=px-xj, wy=py-yj, ll=ex*ex+ey*ey||1;
+    const t = Math.max(0, Math.min(1, (wx*ex+wy*ey)/ll));
+    const dx=wx-t*ex, dy=wy-t*ey, d=dx*dx+dy*dy;
+    if (d < md) md = d;
+  }
+  md = Math.sqrt(md);
+  return inside ? -md : md;
+}
+
+/* ---------- model ---------- */
+let M = null;
+function build(){
+  const T = 60/S.bpm, h = G*T*T/8, th = S.tilt*Math.PI/180;
+  const L = S.len, Rch = S.cg, Rsp = L - S.cg;
+  const phi = Math.PI + 2*th, a0 = Math.PI + th;
+  const shape = makeShape(L, S.sw);
+  // local polygons: a = along axis toward the chusara end (from CoG), p = perpendicular
+  const toLocal = pts => pts.map(([u,r]) => [Rch-u, r]);
+  const polys = [toLocal(shape.outline)];
+  const bands = shape.bands.map(toLocal);
+  const pose = (s, odd) => { const a = a0 - phi*s; return {x:0, y:4*h*s*(1-s), a: odd ? Math.PI - a : a}; };
+  function clear(px, py, p){
+    const dx = Math.cos(p.a), dy = Math.sin(p.a), vx = px-p.x, vy = py-p.y;
+    const al = vx*dx + vy*dy, pe = -vx*dy + vy*dx;
+    let m = Infinity;
+    for (const poly of polys){ const d = polyDist(al, pe, poly); if (d < m) m = d; }
+    return m - RB;
+  }
+  // contact: the ball meets the side of the base at the red-marker height, on the flank facing down
+  const p0 = pose(0, false), d0x = Math.cos(p0.a), d0y = Math.sin(p0.a);
+  const toW = (al, pe) => ({x: p0.x + al*d0x - pe*d0y, y: p0.y + al*d0y + pe*d0x});
+  const ah = Rch - shape.uHit, ph = shape.rHit;
+  let na = shape.slope, np = 1; const nl = Math.hypot(na, np); na /= nl; np /= nl;  // outward normal of the flank
+  const ctr = e => toW(ah + na*(RB+e), ph + np*(RB+e));
+  let e0 = 0;
+  if (clear(ctr(0).x, ctr(0).y, p0) < 0.6){ let a=0,b=80; for (let i=0;i<30;i++){ const m=(a+b)/2; if (clear(ctr(m).x, ctr(m).y, p0) >= 0.6) b=m; else a=m; } e0 = b; }
+  const HIT = toW(ah, ph), BL = ctr(e0), BR = {x:-BL.x, y:BL.y}, W = BR.x - BL.x;
+  // The path itself is a left-right symmetric arc between the two hit points (lowest at the center).
+  // Only the timing along it is lopsided: slow on the struck side, center reached at CROSS.
+  const WARP = Math.log(0.5) / Math.log(CROSS);
+  const ease = s => { const u = Math.pow(Math.min(1, Math.max(0, s)), WARP); return u*u*(3-2*u); };
+  const ballD = (s,D) => { const u = ease(s); return {x: BL.x + W*u, y: BL.y - D*Math.sin(Math.PI*u)}; };
+  function pathClear(D){
+    let m = Infinity;
+    for (let i=5;i<=95;i++){
+      const s=i/100, b=ballD(s,D);
+      const c1 = clear(b.x, b.y, pose(s,false)), c2 = clear(-b.x, b.y, pose(s,true));
+      m = Math.min(m, c1, c2);
+    }
+    return m;
+  }
+  let Dmin = 0, ok = true;
+  if (pathClear(0) < 0){
+    if (pathClear(600) < 0){ ok = false; Dmin = NaN; }
+    else { let a=0,b=600; for (let i=0;i<26;i++){ const m=(a+b)/2; if (pathClear(m) >= 0) b=m; else a=m; } Dmin = b; }
+  }
+  const D = ok ? Math.max(Dmin + MARGIN, DIP_SEEN) : 60;
+  const ball = s => ballD(s, D);
+
+  const P = {ch:[], sp:[], ball:[], sar:[]};
+  const Rsar = Rch - shape.us;   // along-axis offset of the sarado centre from the CoG (negative = spike side)
+  let blen = 0, prev = null;
+  for (let i=0;i<=120;i++){
+    const s=i/120, p=pose(s,false), dx=Math.cos(p.a), dy=Math.sin(p.a);
+    P.ch.push([p.x+Rch*dx, p.y+Rch*dy]);
+    P.sp.push([p.x-Rsp*dx, p.y-Rsp*dy]);
+    P.sar.push([p.x+Rsar*dx, p.y+Rsar*dy]);
+    const b = ball(s); P.ball.push([b.x,b.y]);
+    if (prev) blen += Math.hypot(b.x-prev.x, b.y-prev.y);
+    prev = b;
+  }
+  let ax = 0, minY = Infinity, maxY = -Infinity;
+  for (let i=0;i<=40;i++){
+    const s=i/40;
+    for (const odd of [false,true]){
+      const p=pose(s,odd), dx=Math.cos(p.a), dy=Math.sin(p.a);
+      for (const poly of polys) for (const [al,pe] of poly){
+        const x = p.x + al*dx - pe*dy, y = p.y + al*dy + pe*dx;
+        ax = Math.max(ax, Math.abs(x)); minY = Math.min(minY,y); maxY = Math.max(maxY,y);
+      }
+    }
+    const b = ball(s);
+    ax = Math.max(ax, Math.abs(b.x)+RB); minY = Math.min(minY, b.y-RB); maxY = Math.max(maxY, b.y+RB);
+  }
+  const sarYs = P.sar.map(q => q[1]);
+  const sarRange = Math.max(...sarYs) - Math.min(...sarYs);
+  M = {T,h,th,L,Rch,Rsp,Rsar,sarRange,pose,ball,BL,BR,W,HIT,Dmin,D,ok,blen,v:blen/1000/T,polys,bands,P,
+       rot:Math.round(180+2*S.tilt), bounds:{ax,minY,maxY}};
+}
+
+/* ---------- canvas ---------- */
+const sheet = $('sheet'), cv = $('cv'), ctx = cv.getContext('2d');
+let cw=0, chh=0, dpr=1, k=1, ox=0, oy=0, C={};
+function readColors(){
+  const cs = getComputedStyle(document.documentElement);
+  ['ink','ink-2','sheet','grid','grid-2','accent','accent-soft'].forEach(n => C[n] = cs.getPropertyValue('--'+n).trim());
+}
+function resize(){
+  const r = cv.getBoundingClientRect();
+  dpr = Math.min(2, window.devicePixelRatio || 1);
+  cw = r.width; chh = r.height;
+  cv.width = Math.round(cw*dpr); cv.height = Math.round(chh*dpr);
+  fit();
+}
+function fit(){
+  if (!M || !cw) return;
+  // reserve screen space for the header text (top) and the width label (bottom)
+  const b = M.bounds, pl = 10, TOP = 48, BOT = 30;
+  const ww = 2*b.ax + 2*pl, wh = (b.maxY-b.minY) + 8;
+  k = Math.min(cw/ww, (chh - TOP - BOT)/wh);
+  ox = cw/2;
+  oy = TOP + ((chh - TOP - BOT) - wh*k)/2 + (b.maxY+4)*k;
+}
+const X = x => ox + x*k, Y = y => oy - y*k;
+function seg(x1,y1,x2,y2){ ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); }
+const FJ = '700 11.5px "Zen Kaku Gothic New", "Hiragino Sans", sans-serif';
+function tag(text, x, y, align='center', color=C.accent, font=FJ){
+  ctx.font = font; ctx.textAlign = align; ctx.textBaseline = 'middle';
+  const w = ctx.measureText(text).width;
+  const bx = align==='center' ? x-w/2 : align==='right' ? x-w : x;
+  ctx.fillStyle = C.sheet; ctx.fillRect(bx-3, y-8, w+6, 16);
+  ctx.fillStyle = color; ctx.fillText(text, x, y);
+}
+function arrowHead(tx,ty,hx,hy,color){
+  const a = Math.atan2(hy-ty, hx-tx), s = 8;
+  ctx.fillStyle = color; ctx.beginPath();
+  ctx.moveTo(hx,hy);
+  ctx.lineTo(hx - s*Math.cos(a-0.42), hy - s*Math.sin(a-0.42));
+  ctx.lineTo(hx - s*Math.cos(a+0.42), hy - s*Math.sin(a+0.42));
+  ctx.closePath(); ctx.fill();
+}
+function ballAt(s, odd){ const b = M.ball(s); return odd ? {x:-b.x, y:b.y} : b; }
+
+function drawGrid(){
+  const x0 = (0-ox)/k, x1 = (cw-ox)/k, y1 = (oy-0)/k, y0 = (oy-chh)/k;
+  const minor = 10*k >= 6;
+  ctx.lineWidth = 1;
+  for (let gx = Math.ceil(x0/10)*10; gx <= x1; gx += 10){
+    const major = Math.round(gx) % 50 === 0;
+    if (!major && !minor) continue;
+    ctx.strokeStyle = major ? C['grid-2'] : C.grid;
+    const sx = Math.round(X(gx))+0.5; seg(sx,0,sx,chh);
+  }
+  for (let gy = Math.ceil(y0/10)*10; gy <= y1; gy += 10){
+    const major = Math.round(gy) % 50 === 0;
+    if (!major && !minor) continue;
+    ctx.strokeStyle = major ? C['grid-2'] : C.grid;
+    const sy = Math.round(Y(gy))+0.5; seg(0,sy,cw,sy);
+  }
+}
+function tr(q){ const dx=Math.cos(q.a), dy=Math.sin(q.a); return (al,pe) => [X(q.x + al*dx - pe*dy), Y(q.y + al*dy + pe*dx)]; }
+function pathPts(pts, f, close){
+  ctx.beginPath();
+  pts.forEach(([al,pe],i) => { const [x,y] = f(al,pe); i ? ctx.lineTo(x,y) : ctx.moveTo(x,y); });
+  if (close) ctx.closePath();
+}
+function drawKen(q, ghost){
+  const f = tr(q);
+  if (ghost){
+    ctx.globalAlpha = 0.3; ctx.strokeStyle = C['ink-2']; ctx.lineWidth = 1;
+    M.polys.forEach(poly => { pathPts(poly, f, true); ctx.stroke(); });
+    ctx.globalAlpha = 1; return;
+  }
+  ctx.lineJoin = 'round';
+  M.polys.forEach(poly => {
+    pathPts(poly, f, true);
+    ctx.fillStyle = C.sheet; ctx.fill();
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5; ctx.stroke();
+  });
+  ctx.fillStyle = C.ink; ctx.globalAlpha = 0.85;
+  M.bands.forEach(b => { pathPts(b, f, true); ctx.fill(); });
+  ctx.globalAlpha = 1;
+}
+function drawBall(b, ghost, hot){
+  const cx = X(b.x), cy = Y(b.y), R = RB*k;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2);
+  if (ghost){ ctx.globalAlpha = 0.3; ctx.strokeStyle = C['ink-2']; ctx.lineWidth = 1; ctx.stroke(); ctx.globalAlpha = 1; return; }
+  ctx.fillStyle = hot ? C['accent-soft'] : C.sheet; ctx.fill();
+  const col = hot ? C.accent : C.ink;
+  ctx.strokeStyle = col; ctx.lineWidth = hot ? 2 : 1.5; ctx.stroke();
+  // hole, pointing down: countersink edge visible, bore hidden
+  const yb = -Math.sqrt(RB*RB - 100);
+  ctx.lineWidth = 1.1; seg(X(b.x-10), Y(b.y+yb), X(b.x+10), Y(b.y+yb));
+  ctx.strokeStyle = C['ink-2']; ctx.lineWidth = 0.9; ctx.setLineDash([3,3]);
+  ctx.beginPath();
+  ctx.moveTo(X(b.x-7.5), Y(b.y+yb+2.5)); ctx.lineTo(X(b.x-7.5), Y(b.y+10)); ctx.lineTo(X(b.x), Y(b.y+15)); ctx.lineTo(X(b.x+7.5), Y(b.y+10)); ctx.lineTo(X(b.x+7.5), Y(b.y+yb+2.5));
+  ctx.stroke(); ctx.setLineDash([]);
+}
+function drawCog(q, hot){
+  const x = X(q.x), y = Y(q.y), r = 5.5, col = hot ? C.accent : C.ink;
+  ctx.fillStyle = C.sheet; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = col;
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.arc(x,y,r,-Math.PI/2,0); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.arc(x,y,r,Math.PI/2,Math.PI); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = col; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.stroke();
+}
+function trail(pts, hot, odd){
+  ctx.beginPath();
+  pts.forEach(([x,y],i) => i ? ctx.lineTo(X(x),Y(y)) : ctx.moveTo(X(x),Y(y)));
+  if (hot){
+    ctx.strokeStyle = C.accent; ctx.lineWidth = 2.2; ctx.setLineDash([]); ctx.stroke();
+    const n = pts.length-1;
+    const [h, t] = odd ? [pts[0], pts[4]] : [pts[n], pts[n-4]];
+    arrowHead(X(t[0]),Y(t[1]),X(h[0]),Y(h[1]),C.accent);
+  } else {
+    ctx.strokeStyle = C['ink-2']; ctx.globalAlpha = 0.45; ctx.lineWidth = 1; ctx.setLineDash([3,4]); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+  }
+}
+function dimH(x1, x2, y, text){
+  const a = X(x1), b = X(x2), sy = Y(y);
+  ctx.strokeStyle = C.accent; ctx.lineWidth = 1;
+  seg(a,sy,b,sy); seg(a,sy-5,a,sy+5); seg(b,sy-5,b,sy+5);
+  tag(text, (a+b)/2, sy);
+}
+function dimV(x, y1, y2, text, side){
+  const sx = X(x), a = Y(y1), b = Y(y2);
+  ctx.strokeStyle = C.accent; ctx.lineWidth = 1;
+  seg(sx,a,sx,b); seg(sx-5,a,sx+5,a); seg(sx-5,b,sx+5,b);
+  tag(text, side === 'left' ? sx-8 : sx+8, (a+b)/2, side === 'left' ? 'right' : 'left');
+}
+function annotate(f){
+  const m = M;
+  if (f === 'ball' && m.ok){
+    dimH(m.BL.x, m.BR.x, m.BL.y - m.D - RB - 12, L('c_width', cm(m.W)));
+    if (m.Dmin > 0.5){
+      ctx.strokeStyle = C.accent; ctx.globalAlpha = 0.6; ctx.setLineDash([2,3]); ctx.lineWidth = 1;
+      seg(X(m.BL.x), Y(m.BL.y), X(m.BR.x), Y(m.BL.y)); ctx.setLineDash([]); ctx.globalAlpha = 1;
+      dimV(0, m.BL.y, m.BL.y - m.Dmin, L('c_min', cm(m.Dmin)), 'right');
+    }
+  }
+  if (f === 'spike'){
+    const tipY = m.h - m.Rsp;
+    ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(X(0), Y(tipY), 4, 0, Math.PI*2); ctx.fill();
+    tag(L('c_down', msr(m.T/2)), X(0)+10, Y(tipY), 'left');
+    if (m.ok){
+      const cy = m.BL.y - m.D, s = 5;
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 1.6;
+      seg(X(0)-s, Y(cy)-s, X(0)+s, Y(cy)+s); seg(X(0)-s, Y(cy)+s, X(0)+s, Y(cy)-s);
+      tag(L('c_pass'), X(0)+10, Y(cy), 'left');
+    }
+  }
+  if (f === 'cup'){
+    if (S.tilt > 0){
+      const r = Math.min(46, m.Rch*0.55)*k, th = m.th;
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(X(0), Y(0), r, Math.PI, Math.PI+th, false); ctx.stroke();
+      ctx.beginPath(); ctx.arc(X(0), Y(0), r, -th, 0, false); ctx.stroke();
+      tag(`${S.tilt}°`, X(0) - (r+14)*Math.cos(th/2), Y(0) + (r+14)*Math.sin(th/2) + 4, 'center');
+      tag(`${S.tilt}°`, X(0) + (r+14)*Math.cos(th/2), Y(0) + (r+14)*Math.sin(th/2) + 4, 'center');
+    }
+    tag(L('c_per', m.rot), X(0), Y(m.h + m.Rch + 20) - 14, 'center');
+    [m.HIT, {x:-m.HIT.x, y:m.HIT.y}].forEach((q, i) => {
+      ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(X(q.x), Y(q.y), 4, 0, Math.PI*2); ctx.fill();
+      if (i === 1) tag(L('c_hit'), X(q.x) + 10, Y(q.y) + 14, 'left');
+    });
+  }
+  if (f === 'cog'){
+    const xr = 30;
+    // sarado centre: the point the eye reads as "the middle"
+    ctx.beginPath();
+    m.P.sar.forEach(([x,y],i) => i ? ctx.lineTo(X(x),Y(y)) : ctx.moveTo(X(x),Y(y)));
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.6; ctx.setLineDash([6,4]); ctx.stroke(); ctx.setLineDash([]);
+    const sl = m.P.sar[0];
+    tag(L('c_sar', cm(m.sarRange)), X(-Math.abs(sl[0])) - 6, Y(sl[1]) - 14, 'right', C.ink);
+    ctx.strokeStyle = C.accent; ctx.lineWidth = 3; seg(X(0), Y(0), X(0), Y(m.h));
+    ctx.globalAlpha = 0.6; ctx.lineWidth = 1; ctx.setLineDash([2,3]);
+    seg(X(0), Y(m.h), X(xr), Y(m.h)); ctx.setLineDash([]); ctx.globalAlpha = 1;
+    dimV(xr, 0, m.h, L('c_cog', cm(m.h)), 'right');
+  }
+}
+
+let p = 0, playing = true, last = performance.now();
+function draw(){
+  if (!cw || !M) return;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle = C.sheet; ctx.fillRect(0,0,cw,chh);
+  drawGrid();
+  ctx.strokeStyle = C['ink-2']; ctx.globalAlpha = 0.7; ctx.lineWidth = 1; ctx.setLineDash([5,4]);
+  seg(0, Y(0), cw, Y(0)); ctx.setLineDash([]); ctx.globalAlpha = 1;
+  tag(L('c_base'), 10, Y(0)-11, 'left', C['ink-2'], '500 10.5px "Zen Kaku Gothic New", sans-serif');
+
+  const n = Math.floor(p), s = p - n, odd = (n % 2) === 1, f = S.focus;
+  if (S.ghosts){ [0, 0.5, 1].forEach(t => { drawKen(M.pose(t,false), true); drawBall(M.ball(t), true); }); }
+  trail(M.P.ch, f==='cup', odd);
+  trail(M.P.sp, f==='spike', odd);
+  if (M.ok) trail(M.P.ball, f==='ball', odd);
+
+  const q = M.pose(s, odd), b = ballAt(s, odd);
+  drawKen(q, false);
+  const dx = Math.cos(q.a), dy = Math.sin(q.a);
+  if (f === 'cup'){ ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(X(q.x + M.Rch*dx), Y(q.y + M.Rch*dy), 4.5, 0, Math.PI*2); ctx.fill(); }
+  if (f === 'spike'){ ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(X(q.x - M.Rsp*dx), Y(q.y - M.Rsp*dy), 4.5, 0, Math.PI*2); ctx.fill(); }
+  if (M.ok) drawBall(b, false, f === 'ball');
+  drawCog(q, f === 'cog');
+  annotate(f);
+  const near = Math.min(s, 1-s);
+  if (near < 0.06){
+    const cb = s < 0.5 ? ballAt(0, odd) : ballAt(1, odd);
+    ctx.globalAlpha = 1 - near/0.06; ctx.strokeStyle = C.accent; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(X(cb.x), Y(cb.y), (RB+7)*k, 0, Math.PI*2); ctx.stroke(); ctx.globalAlpha = 1;
+  }
+}
+function phaseText(){
+  const n = Math.floor(p), s = p - n;
+  let t;
+  if (s < 0.035 || s > 0.965) t = L('ph_contact');
+  else if (Math.abs(s-0.5) < 0.05) t = L('ph_top');
+  else if (s < 0.5) t = L('ph_rise');
+  else t = L('ph_fall');
+  $('phase').innerHTML = `${t}<span class="t">${msr(s*M.T)} / ${msr(M.T)} ms</span>`;
+}
+
+/* ---------- audio ---------- */
+let AC = null, MASTER = null, NOISE = null;
+function ensureAudio(){
+  if (!AC){
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return false;
+    AC = new Ctx();
+    MASTER = AC.createGain(); MASTER.gain.value = S.vol; MASTER.connect(AC.destination);
+    const len = Math.floor(AC.sampleRate*0.08);
+    NOISE = AC.createBuffer(1, len, AC.sampleRate);
+    const d = NOISE.getChannelData(0); for (let i=0;i<len;i++) d[i] = Math.random()*2-1;
+  }
+  if (AC.state === 'suspended') AC.resume();
+  return true;
+}
+function env(g, t, peak, dur){
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(peak, t+0.0015);
+  g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+}
+function knock(t){
+  const nodes = [];
+  const n = AC.createBufferSource(); n.buffer = NOISE;
+  const bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2500; bp.Q.value = 4;
+  const g = AC.createGain(); env(g, t, 0.8, 0.04);
+  n.connect(bp); bp.connect(g); g.connect(MASTER); n.start(t); n.stop(t+0.06); nodes.push(n);
+  [[1850,0.45,0.07],[1180,0.25,0.05],[3200,0.12,0.03]].forEach(([fq,a,d]) => {
+    const o = AC.createOscillator(); o.frequency.setValueAtTime(fq,t); o.frequency.exponentialRampToValueAtTime(fq*0.92, t+d);
+    const og = AC.createGain(); env(og, t, a, d);
+    o.connect(og); og.connect(MASTER); o.start(t); o.stop(t+d+0.02); nodes.push(o);
+  });
+  return nodes;
+}
+function beep(t, lastOne){
+  const o = AC.createOscillator(); o.type = 'sine'; o.frequency.value = lastOne ? 1568 : 1175;
+  const g = AC.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.32,t+0.005); g.gain.exponentialRampToValueAtTime(0.0001,t+0.09);
+  o.connect(g); g.connect(MASTER); o.start(t); o.stop(t+0.11);
+  return [o];
+}
+
+/* ---------- rhythm trainer ---------- */
+const TR = {on:false, nodes:[], ev:[], to:null};
+function trStart(){
+  if (!ensureAudio()){ $('trState').textContent = L('no_audio'); return; }
+  TR.on = true; $('trBtn').textContent = L('stop');
+  trSchedule(AC.currentTime + 0.35);
+}
+function trStop(msg){
+  TR.on = false; clearTimeout(TR.to);
+  TR.nodes.forEach(n => { try { n.stop(); } catch(e){} });
+  TR.nodes = []; TR.ev = [];
+  $('trBtn').textContent = L('start'); $('trState').textContent = msg || L('ready'); $('trNow').textContent = '0';
+  $('trL').classList.remove('on'); $('trR').classList.remove('on');
+}
+function trSchedule(t0){
+  const T = 60/S.bpm, N = S.target, ci = 2*T;
+  TR.ev = [];
+  for (let i=0;i<4;i++){ const t = t0+i*ci; TR.nodes.push(...beep(t, i===3)); TR.ev.push({t, k:'count', i}); }
+  const ts = t0 + 4*ci;
+  for (let j=0;j<N;j++){
+    const t = ts + j*T, aud = S.guide==='all' || (S.guide==='first2' && j<2);
+    if (aud) TR.nodes.push(...knock(t));
+    TR.ev.push({t, k:'tap', j, aud});
+  }
+  const te = ts + (N-1)*T + 0.25;
+  if (S.loop){
+    TR.ev.push({t:te, k:'rest', until:te+5});
+    TR.to = setTimeout(() => { if (TR.on){ TR.nodes = []; trSchedule(te+5); } }, Math.max(0, (te+5-AC.currentTime-0.25)*1000));
+  } else TR.ev.push({t:te, k:'done'});
+}
+function trTick(){
+  if (!TR.on || !AC) return;
+  const now = AC.currentTime;
+  let e = null;
+  for (const ev of TR.ev){ if (ev.t <= now) e = ev; else break; }
+  const st = $('trState'), Lb = $('trL'), Rb = $('trR');
+  Lb.classList.remove('on'); Rb.classList.remove('on');
+  if (!e){ st.textContent = L('get_ready'); return; }
+  if (e.k === 'count'){ st.textContent = L('count', e.i+1); $('trNow').textContent = '0'; }
+  else if (e.k === 'tap'){
+    st.textContent = e.aud ? L('follow') : L('own');
+    $('trNow').textContent = e.j+1;
+    if (now - e.t < 0.11) (e.j % 2 === 0 ? Lb : Rb).classList.add('on');
+  }
+  else if (e.k === 'rest'){ st.textContent = L('rest', Math.max(0, Math.ceil(e.until-now))); }
+  else if (e.k === 'done'){ trStop(L('done')); }
+}
+
+/* ---------- UI ---------- */
+const CUES = {
+  ball: m => !m.ok ? L('cue_ball_no')
+            : m.Dmin < 0.5 ? L('cue_ball_flat', cm(m.D,0), cm(m.W))
+            : L('cue_ball_dip', cm(m.Dmin), cm(m.W)),
+  spike: m => L('cue_spike', msr(m.T/2)),
+  cup: m => L('cue_cup', S.tilt, cm(PLAKEN.U_HIT*S.len/BASE_L), m.rot),
+  cog: m => L('cue_cog', cm(m.h), cm(m.sarRange)) + (S.amp > 0 ? L('cue_amp', cm(S.amp)) : '')
+};
+function setPressed(container, attr, val){
+  container.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset[attr] === String(val))));
+}
+function updateStatus(){
+  const names = L('names'), keys = Object.keys(names), done = keys.filter(k => S.meas[k]);
+  const rest = keys.filter(k => !S.meas[k]).map(k => names[k]);
+  $('status').innerHTML = `<span class="chip${done.length===keys.length?' ok':''}">${L('st_meas', done.length, keys.length)}</span>` +
+    `<span>${rest.length ? L('st_ph', rest.join(L('sep'))) : L('st_all')}</span>`;
+}
+function updateAmp(){
+  const pred = M.h, a = S.amp;
+  $('outAmp').textContent = a > 0 ? `${a} mm` : L('not_entered');
+  const pr = Math.round(pred);
+  let t;
+  if (!(a >= 0) || a === null) t = L('amp_none', pr);
+  else if (a > pred*1.15) t = L('amp_big', a, pr);
+  else if (a >= pred*0.85) t = L('amp_match', a, pr);
+  else {
+    const tf = 8*a/(G*M.T), tc = M.T - tf;
+    t = L('amp_small', a, pr, Math.round(a/pred*100), msr(tc), Math.round(tc/M.T*100), msr(M.T));
+  }
+  $('ampRes').innerHTML = t;
+}
+function updateText(){
+  $('cue').innerHTML = CUES[S.focus](M);
+  $('roT').textContent = msr(M.T);
+  $('roH').textContent = cm(M.h);
+  $('roRot').textContent = M.rot;
+  $('roW').textContent = cm(M.W);
+  $('roD').textContent = M.ok ? (M.Dmin < 0.5 ? '0' : cm(M.Dmin)) : '—';
+  $('roV').textContent = M.v.toFixed(1);
+  document.querySelectorAll('.ro').forEach(el => el.classList.toggle('hot', el.dataset.for.split(' ').includes(S.focus)));
+  setPressed($('focus'), 'f', S.focus);
+  updateAmp();
+}
+function updateParams(){
+  $('inBpm').value = S.bpm; $('outBpm').textContent = `${S.bpm} bpm`;
+  $('helpBpm').textContent = L('help_bpm', msr(60/S.bpm), msr(120/S.bpm));
+  $('inTilt').value = S.tilt; $('outTilt').textContent = `${S.tilt}°`;
+  $('inLen').value = S.len; $('outLen').textContent = `${S.len} mm`;
+  const cmin = Math.round(S.len*0.26), cmax = Math.round(S.len*0.7);
+  $('inCg').min = cmin; $('inCg').max = cmax; S.cg = clamp(S.cg, cmin, cmax);
+  $('inCg').value = S.cg; $('outCg').textContent = L('out_cg', S.cg);
+  $('helpCg').textContent = L('help_cg', CG_DEFAULT);
+  $('inSw').value = S.sw; $('outSw').textContent = `${S.sw} mm`; $('mSw').checked = S.meas.sw;
+  $('mBpm').checked = S.meas.bpm; $('mTilt').checked = S.meas.tilt; $('mLen').checked = S.meas.len; $('mCg').checked = S.meas.cg;
+  $('fps').value = String(S.fps); $('frames').value = S.frames;
+  $('inAmp').value = S.amp > 0 || S.amp === 0 ? S.amp : '';
+  updateFrames();
+  drawHChart();
+  updateStatus();
+}
+function updateFrames(){
+  const fps = +$('fps').value, fr = +$('frames').value;
+  if (fps > 0 && fr > 0){ const b = 60*fps/fr; $('fBpm').textContent = b.toFixed(0); $('fMs').textContent = (1000*fr/fps).toFixed(0); }
+  else { $('fBpm').textContent = '—'; $('fMs').textContent = '—'; }
+}
+function drawHChart(){
+  const svg = $('hchart'), Wd = 320, Ht = 132, l = 30, r = 12, t = 12, b = 30;
+  const hx = bpm => l + (bpm-120)/360*(Wd-l-r);
+  const hy = hc => t + (1 - hc/32)*(Ht-t-b);
+  const hcm = bpm => G*Math.pow(60/bpm,2)/8/10;
+  let s = '';
+  [0,10,20,30].forEach(v => { s += `<line x1="${l}" x2="${Wd-r}" y1="${hy(v)}" y2="${hy(v)}" stroke="var(--rule)" stroke-width="1"/>` +
+                                   `<text x="${l-5}" y="${hy(v)+3}" text-anchor="end">${v}</text>`; });
+  [120,240,360,480].forEach(v => { s += `<text x="${hx(v)}" y="${Ht-b+13}" text-anchor="middle">${v}</text>`; });
+  s += `<text x="${l-5}" y="${t-2}" text-anchor="end" class="jp">cm</text>`;
+  s += `<text x="${Wd-r}" y="${Ht-3}" text-anchor="end" class="jp">${L('chart_x')}</text>`;
+  let d = '';
+  for (let v=120; v<=480; v+=4) d += (v===120?'M':'L') + hx(v).toFixed(1) + ' ' + hy(hcm(v)).toFixed(1) + ' ';
+  s += `<path d="${d}" fill="none" stroke="var(--ink-2)" stroke-width="1.5"/>`;
+  const cur = S.bpm, half = cur/2;
+  if (half >= 120){
+    s += `<line x1="${hx(half)}" y1="${hy(hcm(half))}" x2="${hx(cur)}" y2="${hy(hcm(cur))}" stroke="var(--accent)" stroke-dasharray="3 3" stroke-width="1"/>`;
+    s += `<circle cx="${hx(half)}" cy="${hy(hcm(half))}" r="4" fill="var(--sheet)" stroke="var(--accent)" stroke-width="1.5"/>`;
+    s += `<text x="${hx(half)+7}" y="${hy(hcm(half))-4}" class="jp" style="fill:var(--accent)">${L('chart_half', hcm(half).toFixed(1))}</text>`;
+  }
+  s += `<circle cx="${hx(cur)}" cy="${hy(hcm(cur))}" r="4.5" fill="var(--accent)"/>`;
+  const lx = hx(cur) > Wd-90 ? hx(cur)-8 : hx(cur)+8, anc = hx(cur) > Wd-90 ? 'end' : 'start';
+  s += `<text x="${lx}" y="${hy(hcm(cur))-8}" text-anchor="${anc}" style="fill:var(--accent);font-weight:600">${hcm(cur).toFixed(1)} cm</text>`;
+  svg.innerHTML = s;
+}
+function refresh(stopTrainer){
+  if (stopTrainer && TR.on) trStop(L('stopped'));
+  build(); fit(); updateText(); updateParams(); save();
+}
+
+$('focus').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.focus = b.dataset.f; updateText(); save(); });
+function setPlaying(v){ playing = v; $('play').textContent = v ? L('pause') : L('play'); }
+$('play').addEventListener('click', () => setPlaying(!playing));
+sheet.addEventListener('click', () => setPlaying(!playing));
+sheet.addEventListener('keydown', e => {
+  if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); setPlaying(!playing); }
+  if (e.key === 'ArrowRight'){ e.preventDefault(); stepBy(1); }
+  if (e.key === 'ArrowLeft'){ e.preventDefault(); stepBy(-1); }
+});
+$('speeds').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.speed = +b.dataset.s; setPressed($('speeds'),'s',b.dataset.s); save(); });
+$('snd').addEventListener('click', () => { S.sound = !S.sound; if (S.sound) ensureAudio(); $('snd').setAttribute('aria-pressed', String(S.sound)); save(); });
+$('gh').addEventListener('click', () => { S.ghosts = !S.ghosts; $('gh').setAttribute('aria-pressed', String(S.ghosts)); save(); });
+$('scrub').addEventListener('input', e => { setPlaying(false); p = (+e.target.value/100) % 2; });
+function stepBy(d){ setPlaying(false); p = ((p + d/24) % 2 + 2) % 2; }
+$('back').addEventListener('click', () => stepBy(-1));
+$('fwd').addEventListener('click', () => stepBy(1));
+document.querySelector('.poses').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; setPlaying(false); p = +b.dataset.p; });
+
+const RANGE = {bpm:'inBpm', tilt:'inTilt', len:'inLen', cg:'inCg', sw:'inSw'};
+Object.entries(RANGE).forEach(([key,id]) => $(id).addEventListener('input', e => { S[key] = +e.target.value; refresh(key==='bpm'); }));
+document.querySelectorAll('.step').forEach(b => b.addEventListener('click', () => {
+  const key = b.dataset.k, el = $(RANGE[key]);
+  S[key] = clamp(S[key] + +b.dataset.d, +el.min, +el.max); refresh(key==='bpm');
+}));
+[['mBpm','bpm'],['mTilt','tilt'],['mLen','len'],['mCg','cg'],['mSw','sw']].forEach(([id,key]) =>
+  $(id).addEventListener('change', e => { S.meas[key] = e.target.checked; updateStatus(); save(); }));
+$('inAmp').addEventListener('input', e => { const v = e.target.value.trim(); S.amp = v === '' ? null : Math.max(0, +v); updateText(); save(); });
+$('fps').addEventListener('change', e => { S.fps = +e.target.value; updateFrames(); save(); });
+$('frames').addEventListener('input', e => { S.frames = +e.target.value; updateFrames(); save(); });
+$('useF').addEventListener('click', () => {
+  const fps = +$('fps').value, fr = +$('frames').value;
+  if (!(fps > 0 && fr > 0)) return;
+  S.bpm = clamp(Math.round(60*fps/fr), 120, 480); S.meas.bpm = true; refresh(true);
+});
+$('reset').addEventListener('click', () => {
+  ['bpm','tilt','len','cg','sw','amp'].forEach(k => S[k] = DEF[k]);
+  S.meas = Object.assign({}, DEF.meas); refresh(true);
+});
+
+$('trBtn').addEventListener('click', () => TR.on ? trStop() : trStart());
+$('targets').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.target = +b.dataset.n; $('trN').textContent = S.target; setPressed($('targets'),'n',S.target); if (TR.on) trStop(L('stopped')); save(); });
+$('guides').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.guide = b.dataset.g; setPressed($('guides'),'g',S.guide); if (TR.on) trStop(L('stopped')); save(); });
+
+/* ---------- language switch ---------- */
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.title = L('title');
+  document.querySelectorAll('[data-t]').forEach(el => { el.textContent = L(el.dataset.t); });
+  document.querySelectorAll('[data-th]').forEach(el => { el.innerHTML = L(el.dataset.th); });
+  document.querySelectorAll('[data-ta]').forEach(el => { el.setAttribute('aria-label', L(el.dataset.ta)); });
+  document.querySelectorAll('[data-tp]').forEach(el => { el.setAttribute('placeholder', L(el.dataset.tp)); });
+  setPressed($('lang'), 'l', LANG);
+}
+function setLang(l, fromHash){
+  if (l !== 'ja' && l !== 'en') return;
+  LANG = l;
+  try { localStorage.setItem(LKEY, l); } catch(e) {}
+  if (!fromHash){ try { history.replaceState(null, '', '#' + l); } catch(e) {} }
+  applyLang();
+  setPlaying(playing);
+  $('trBtn').textContent = TR.on ? L('stop') : L('start');
+  if (!TR.on) $('trState').textContent = L('ready');
+  if (M){ updateText(); updateParams(); }
+}
+$('lang').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setLang(b.dataset.l); });
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1).toLowerCase(); if (h !== LANG) setLang(h, true); });
+$('trLoop').addEventListener('change', e => { S.loop = e.target.checked; save(); });
+$('vol').addEventListener('input', e => { S.vol = +e.target.value/100; $('volOut').textContent = `${e.target.value}%`; if (MASTER) MASTER.gain.value = S.vol; save(); });
+
+setPressed($('speeds'),'s',String(S.speed));
+$('gh').setAttribute('aria-pressed', String(S.ghosts));
+setPressed($('targets'),'n',S.target); $('trN').textContent = S.target;
+setPressed($('guides'),'g',S.guide);
+$('trLoop').checked = S.loop;
+$('vol').value = Math.round(S.vol*100); $('volOut').textContent = `${Math.round(S.vol*100)}%`;
+S.sound = false; $('snd').setAttribute('aria-pressed','false'); // audio needs a fresh tap each visit
+
+readColors();
+applyLang(); $('trBtn').textContent = L('start'); $('trState').textContent = L('ready');
+build(); updateText(); updateParams();
+new ResizeObserver(resize).observe(cv); resize();
+if (matchMedia('(prefers-reduced-motion: reduce)').matches){ p = 0.5; setPlaying(false); } else setPlaying(true);
+
+let lastScrub = 0;
+function frame(now){
+  const dt = Math.min(0.1, (now-last)/1000); last = now;
+  if (playing && M){
+    const np = p + dt*S.speed/M.T;
+    if (Math.floor(np) !== Math.floor(p) && S.sound && AC) knock(AC.currentTime + 0.005);
+    p = np % 2;
+    if (now - lastScrub > 50){ $('scrub').value = (p*100).toFixed(1); lastScrub = now; }
+  } else if (!playing){ $('scrub').value = (p*100).toFixed(1); }
+  draw(); phaseText(); trTick();
+  requestAnimationFrame(frame);
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
+requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>

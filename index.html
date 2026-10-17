@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EDEX Kendama</title>
+<meta name="description" content="3Dプリントのけん玉 PLAKEN をつくる EDEX Kendama の公式サイト。Official site of EDEX Kendama, maker of the 3D-printed kendama PLAKEN.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDEX Kendama">
+<meta property="og:title" content="EDEX Kendama">
+<meta property="og:description" content="Designed so your tricks land. PLAKEN, the 3D-printed kendama.">
+<meta property="og:url" content="https://edexkendama.com/">
+<meta property="og:image" content="https://edexkendama.com/img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0a0a0a">
+<script>
+/* Language: fixed by URL (/en, /ja, #en, #ja) > saved choice > device language (ja -> Japanese, everything else -> English) */
+(function () {
+  var lang = null, h = (location.hash || '').slice(1).toLowerCase(), p = (location.pathname || '').toLowerCase();
+  if (/(^|\/)en(\/|$)/.test(p) || h === 'en') lang = 'en';
+  else if (/(^|\/)ja(\/|$)/.test(p) || h === 'ja') lang = 'ja';
+  if (!lang) { try { var s = localStorage.getItem('edex-lang'); if (s === 'en' || s === 'ja') lang = s; } catch (e) {} }
+  if (!lang) { var L = (navigator.languages && navigator.languages[0]) || navigator.language || ''; lang = /^ja\b/i.test(L) ? 'ja' : 'en'; }
+  document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.lang = lang;
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* Layout: one long dark page. Real photo hero, then a full-screen sticky scroll stage (rendered frames), then plain bands: log, Tap Lab, buy, follow. Single dark look by choice, matching the product photos. */
+:root {
+  --ground: #0a0a0a;
+  --surface: #0f0f0f;
+  --surface-2: #151515;
+  --line: #262624;
+  --line-2: #3a3a38;
+  --fg: #f2f2f0;
+  --soft: #cfcfcb;
+  --muted: #a3a3a0;
+  --dim: #6b6b68;
+  --display: "Archivo", "IBM Plex Sans JP", system-ui, sans-serif;
+  --body: "IBM Plex Sans JP", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--ground); }
+body { margin: 0; color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--ground); }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: var(--fg); }
+html[data-lang="ja"] .l-en, html[data-lang="en"] .l-ja, html:not([data-lang]) .l-en { display: none !important; }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.eyebrow { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; color: var(--muted); text-transform: uppercase; }
+.h-en { font-family: var(--display); font-stretch: 75%; font-weight: 800; letter-spacing: -0.005em; text-wrap: balance; }
+.h-ja { font-family: var(--body); font-weight: 700; letter-spacing: 0.01em; text-wrap: balance; }
+.lead { margin: 0; color: var(--soft); max-width: 36em; }
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+
+/* header */
+.head { padding-block: 12px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.logo { display: flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none; }
+.logo .mark { height: 36px; width: auto; display: block; }
+.logo .word { height: 13px; width: auto; display: block; }
+.head-r { display: flex; align-items: center; gap: 10px; }
+.taplink { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border: 1px solid #333331; border-radius: 3px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; color: var(--fg); text-decoration: none; white-space: nowrap; }
+.taplink:hover { border-color: var(--muted); }
+.langs { display: flex; gap: 2px; padding: 2px; border: 1px solid #333331; border-radius: 3px; }
+.langs button { font-family: var(--mono); font-size: 13px; min-width: 44px; min-height: 40px; border: 0; border-radius: 2px; background: transparent; color: var(--muted); cursor: pointer; }
+.langs button[aria-pressed="true"] { background: var(--fg); color: var(--ground); font-weight: 500; }
+
+/* buttons */
+.btns { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 22px; border-radius: 2px; text-decoration: none; font-weight: 700; text-align: center; line-height: 1.3; }
+.btn.solid { background: var(--fg); color: var(--ground); }
+.btn.line { border: 1px solid var(--fg); color: var(--fg); font-weight: 500; }
+.btn.wide { width: 100%; }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+
+/* hero */
+.hero .wrap { padding-block: 8px 72px; display: flex; flex-wrap: wrap; align-items: center; gap: 32px; }
+.hero-photo { flex: 1 1 320px; min-width: 0; }
+.hero-photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; background: #000; -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, #000 62%, transparent 100%); }
+.hero-text { flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.hero h1 { margin: 0; }
+.hero h1 .h-en { font-size: clamp(46px, 6.5vw, 88px); line-height: 0.96; }
+.hero h1 .h-ja { font-size: clamp(34px, 5.2vw, 66px); line-height: 1.25; }
+
+/* scroll stage */
+.track { position: relative; height: 1300vh; border-top: 1px solid #222220; }
+.stage { position: sticky; top: env(safe-area-inset-top, 0px); height: calc(100vh - env(safe-area-inset-top, 0px)); height: calc(100svh - env(safe-area-inset-top, 0px)); overflow: hidden; background: var(--ground); }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.6) 45%, rgba(10,10,10,0) 100%); pointer-events: none; }
+.progress { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--line); z-index: 3; }
+.progress span { display: block; height: 100%; width: 0; background: var(--fg); }
+.sbar { position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.sbar .brand { display: flex; align-items: center; gap: 10px; }
+.sbar .brand .mark { height: 32px; width: auto; }
+.sbar .brand .word { height: 12px; width: auto; }
+.sbar .right { display: flex; align-items: center; gap: 14px; }
+.step { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.skip { display: inline-flex; align-items: center; min-height: 36px; padding: 0 10px; border: 1px solid var(--line-2); border-radius: 2px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--muted); text-decoration: none; background: rgba(10,10,10,0.5); transition: opacity 0.3s; }
+.skip:hover { color: var(--fg); border-color: var(--muted); }
+.cap { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 32px); opacity: 0; transform: translateY(14px); transition: opacity 0.45s ease, transform 0.45s ease; pointer-events: none; }
+.cap.on { opacity: 1; transform: none; pointer-events: auto; }
+.cap .inner { max-width: 560px; display: flex; flex-direction: column; gap: 10px; }
+.cap h2 { margin: 0; }
+.cap h2.h-en { font-size: clamp(34px, 8vw, 60px); line-height: 1; }
+.cap h2.h-ja { font-size: clamp(26px, 6.6vw, 48px); line-height: 1.2; }
+.cap p { margin: 0; color: var(--soft); font-size: 15px; line-height: 1.8; max-width: 34em; }
+.cap .touch { margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--line-2); color: var(--fg); font-weight: 500; font-size: 16px; }
+.cap .price { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; color: var(--muted); }
+.cap .buy { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 4px; }
+.cap .buy .btn { padding: 0 12px; }
+.cap .buy .btn.line { grid-column: 1 / -1; }
+.hint { position: absolute; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); transform: translateX(-50%); z-index: 2; margin: 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--muted); transition: opacity 0.3s; }
+.sload { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; color: var(--muted); z-index: 1; }
+
+/* bands */
+.band { border-top: 1px solid #222220; }
+.band > .wrap { padding-block: 64px; display: flex; flex-direction: column; gap: 28px; }
+.band h2 { margin: 0; }
+.band h2 .h-en { font-size: clamp(36px, 4.5vw, 60px); line-height: 1; }
+.band h2 .h-ja { font-size: clamp(30px, 4vw, 48px); line-height: 1.25; }
+.intro { display: flex; flex-direction: column; gap: 14px; max-width: 640px; }
+
+/* log cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+.card { border: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; min-width: 0; }
+.card.latest { border-color: var(--line-2); }
+.shots { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; background: #000; border-bottom: 1px solid var(--line); scrollbar-width: none; }
+.shots::-webkit-scrollbar { display: none; }
+.shots img { display: block; flex: 0 0 100%; width: 100%; height: auto; object-fit: contain; background: #000; scroll-snap-align: start; }
+.shots.wide img { aspect-ratio: 4 / 3; }
+.shots.tall img { aspect-ratio: 4 / 5; }
+.swipe { margin: 0; padding: 8px 20px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--muted); border-bottom: 1px solid var(--line); }
+.card-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.date { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; color: var(--muted); }
+.badge { padding: 3px 8px; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.12em; }
+.badge.solid { background: var(--fg); color: var(--ground); }
+.badge.line { border: 1px solid var(--dim); color: var(--muted); letter-spacing: 0.06em; }
+.card h3 { margin: 0; font-family: var(--display); font-stretch: 80%; font-weight: 700; font-size: 30px; line-height: 1.05; }
+.feats { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; color: var(--soft); }
+.feats li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; }
+.feats li::before { content: "—"; color: var(--dim); }
+.types { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.type { border: 1px solid var(--line-2); padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+.type b { font-family: var(--display); font-stretch: 80%; font-weight: 800; font-size: 20px; line-height: 1.1; }
+.type b.l-ja { font-family: var(--body); font-weight: 700; font-size: 18px; line-height: 1.3; }
+.type .sub { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--muted); }
+.type .sub.l-ja { font-family: var(--body); font-size: 12px; letter-spacing: 0.06em; }
+.type .desc { font-size: 14px; line-height: 1.6; color: var(--soft); }
+.specs { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.specs div { background: var(--surface); padding: 12px; }
+.specs div.full { grid-column: 1 / -1; }
+.specs dt { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--muted); }
+.specs dt.l-ja { font-family: var(--body); letter-spacing: 0.06em; }
+.specs dd { margin: 0; font-family: var(--display); font-stretch: 80%; font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
+.small { margin: 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
+.rowlink { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 0 4px; border-bottom: 1px solid var(--line-2); text-decoration: none; color: var(--fg); font-weight: 500; }
+.rowlink .arrow { font-family: var(--mono); }
+.rowlink .note { color: var(--muted); font-weight: 400; }
+
+/* tap lab */
+.tap { display: flex; flex-wrap: wrap; gap: 28px; align-items: center; }
+.tap-text { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.open-tap { align-self: flex-start; margin-top: 6px; }
+.soon { align-self: flex-start; display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border: 1px dashed var(--dim); color: var(--muted); font-family: var(--mono); font-size: 13px; letter-spacing: 0.12em; border-radius: 2px; margin-top: 6px; }
+.bars { flex: 1 1 300px; min-width: 0; margin: 0; border: 1px solid var(--line); background: var(--surface); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.bars .cols { display: flex; align-items: flex-end; gap: 12px; height: 150px; border-bottom: 1px solid var(--line-2); }
+.bars .col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; height: 100%; }
+.bars .col span:first-child { font-family: var(--mono); font-size: 12px; color: var(--muted); text-align: center; }
+.bars .col span:last-child { display: block; }
+.bars figcaption { font-size: 13px; line-height: 1.8; color: var(--muted); }
+
+/* buy */
+.shops { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.shop { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 96px; padding: 20px; border-radius: 2px; text-decoration: none; }
+.shop.solid { background: var(--fg); color: var(--ground); }
+.shop.line { border: 1px solid var(--line-2); color: var(--fg); }
+.shop .txt { display: flex; flex-direction: column; gap: 2px; }
+.shop .where { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; }
+.shop .where.l-ja { font-family: var(--body); letter-spacing: 0.1em; }
+.shop.solid .where, .shop.solid .desc { color: #3a3a38; }
+.shop.line .where, .shop.line .desc { color: var(--muted); }
+.shop .name { font-family: var(--display); font-stretch: 80%; font-weight: 800; font-size: 28px; line-height: 1.1; }
+.shop .desc { font-size: 14px; }
+.shop .arrow { font-family: var(--mono); font-size: 22px; }
+
+/* follow */
+.links { display: flex; flex-direction: column; border-top: 1px solid var(--line-2); }
+.links a { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; border-bottom: 1px solid var(--line-2); text-decoration: none; color: var(--fg); }
+.links .t { display: flex; flex-direction: column; line-height: 1.4; min-width: 0; }
+.links .t b { font-weight: 700; }
+.links .t span { font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
+.links .t span.mono { font-family: var(--mono); font-size: 13px; }
+
+.foot { border-top: 1px solid #222220; }
+.foot .wrap { padding-block: 40px 56px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
+.foot .stack { width: 140px; height: auto; display: block; }
+.foot .fine { display: flex; flex-direction: column; gap: 6px; max-width: 560px; }
+.foot .fine p { margin: 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
+.foot .fine .mono { font-family: var(--mono); letter-spacing: 0.06em; }
+
+@media (prefers-reduced-motion: reduce) { .cap { transition: none; transform: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap head">
+    <a class="logo" href="#top" id="top" aria-label="EDEX Kendama">
+      <img class="mark" src="img/edex-mark-white.png" alt="">
+      <img class="word" src="img/edex-wordmark-white.png" alt="">
+    </a>
+    <div class="head-r">
+      <a class="taplink" href="tap-lab.html" data-taplab>Tap Lab</a>
+      <div class="langs" role="group" aria-label="Language / 言語">
+        <button type="button" data-set-lang="ja" lang="ja" aria-pressed="false">JP</button>
+        <button type="button" data-set-lang="en" lang="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap">
+    <div class="hero-photo">
+      <img src="img/v2-pair.webp" width="900" height="1200" data-alt-ja="PLAKEN HOLLOW Frame V2を2本並べた写真。黒背景" data-alt-en="Two PLAKEN HOLLOW Frame V2 kendama side by side on a black background" alt="">
+    </div>
+    <div class="hero-text">
+      <p class="eyebrow l-ja" lang="ja">3Dプリントのけん玉 · 日本で設計・製造</p>
+      <p class="eyebrow l-en" lang="en">3D-printed kendama · Designed &amp; printed in Japan</p>
+      <h1 id="hero-title">
+        <span class="h-ja l-ja" lang="ja" style="display:block">構造から、<br>成功体験を設計する。</span>
+        <span class="h-en l-en" lang="en" style="display:block">Designed so your tricks land.</span>
+      </h1>
+      <p class="lead l-ja" lang="ja">PLAKENは、木のけん玉をプラスチックで真似たものではありません。重さ、バランス、形。3Dプリントだからできるやり方で、遊んだときの感触から設計しています。</p>
+      <p class="lead l-en" lang="en">PLAKEN isn’t a wooden kendama copied in plastic. We design how it plays, from weight and balance to shape, using what 3D printing makes possible.</p>
+      <div class="btns l-ja">
+        <a class="btn solid" href="#buy">購入する</a>
+        <a class="btn line" href="https://www.instagram.com/edex_kendama">Instagramをフォロー</a>
+      </div>
+      <div class="btns l-en">
+        <a class="btn solid" href="https://www.instagram.com/edex_kendama">Follow on Instagram</a>
+        <a class="btn line" href="#buy">Where to buy</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="track" id="structure">
+  <div class="stage" id="stage">
+    <canvas id="cv" role="img" data-label-ja="PLAKEN HOLLOW Frame V2の3D映像。スクロールで分解し、皿・ルナホール・ストリングホールを見せる" data-label-en="3D view of PLAKEN HOLLOW Frame V2. Scrolling takes it apart and shows the cups, luna hole and string holes"></canvas>
+    <div class="sload" id="sload" hidden><span class="l-ja">読み込み中…</span><span class="l-en">Loading…</span></div>
+    <div class="progress" aria-hidden="true"><span id="sbar"></span></div>
+    <div class="sbar">
+      <div class="brand" aria-hidden="true"><img class="mark" src="img/edex-mark-white.png" alt=""><img class="word" src="img/edex-wordmark-white.png" alt=""></div>
+      <div class="right">
+        <span class="step" id="step" aria-hidden="true">01 / 07</span>
+        <a class="skip" id="skip" href="#log"><span class="l-ja">スキップ ↓</span><span class="l-en">SKIP ↓</span></a>
+      </div>
+    </div>
+
+    <section class="cap" data-from="0" data-to="15" data-step="01">
+      <div class="inner">
+        <p class="eyebrow">PLAKEN HOLLOW Frame V2</p>
+        <h2 class="h-ja l-ja" lang="ja">分解して、見てみる。</h2>
+        <h2 class="h-en l-en" lang="en">Let’s take it apart.</h2>
+      </div>
+    </section>
+    <section class="cap" data-from="16" data-to="37" data-step="02">
+      <div class="inner">
+        <p class="eyebrow">Frame</p>
+        <h2 class="h-ja l-ja" lang="ja">皿胴と剣が、<br>ひとつのフレーム。</h2>
+        <h2 class="h-en l-en" lang="en">Sarado and ken, one frame.</h2>
+        <p class="l-ja" lang="ja">皿胴と剣軸を、ひとつの部品として作っている。木のけん玉のように皿胴がゆるまないので、重心がぶれない。付け根は段差なくつないで、風車で指が通る道をなめらかにした。</p>
+        <p class="l-en" lang="en">The sarado and the ken shaft are made as a single part. Nothing can work loose the way a wooden sarado can, so the balance stays put. The joint flows without a step, so your finger slides straight through a windmill.</p>
+      </div>
+    </section>
+    <section class="cap" data-from="38" data-to="58" data-step="03">
+      <div class="inner">
+        <p class="eyebrow">Hollow</p>
+        <h2 class="h-ja l-ja" lang="ja">上から見ると、<br>えぐれている。</h2>
+        <h2 class="h-en l-en" lang="en">Scooped out, seen from above.</h2>
+        <p class="l-ja" lang="ja">要らないところを抜いて、重さを回転する面の近くに寄せた。回したときに、ぶれにくくするため。</p>
+        <p class="l-en" lang="en">What isn’t needed is taken away, and the weight sits close to the plane it spins in, so it wobbles less when it turns.</p>
+        <p class="l-ja" lang="ja">なめらかな付け根と、このえぐれ。現行の実用的なけん玉では、ほかに見ない形。</p>
+        <p class="l-en" lang="en">That seamless joint and this scoop, together: a shape you won’t see on other kendama made for real play today.</p>
+      </div>
+    </section>
+    <section class="cap" data-from="59" data-to="85" data-step="04">
+      <div class="inner">
+        <p class="eyebrow">TPU cups</p>
+        <h2 class="h-ja l-ja" lang="ja">皿は、TPU。</h2>
+        <h2 class="h-en l-en" lang="en">The cups are TPU.</h2>
+        <p class="l-ja" lang="ja">PLAだけでは硬すぎて、技がやりづらい。皿をTPUにして当たりをやわらげ、剣を守るダンパーにもしている。</p>
+        <p class="l-en" lang="en">All-PLA cups are too hard, and tricks get tougher. TPU softens the contact and works as a damper that protects the ken.</p>
+      </div>
+    </section>
+    <section class="cap" data-from="86" data-to="111" data-step="05">
+      <div class="inner">
+        <p class="eyebrow">Luna hole</p>
+        <h2 class="h-ja l-ja" lang="ja">中皿の奥に、<br>ルナホール。</h2>
+        <h2 class="h-en l-en" lang="en">Inside the base cup: the luna hole.</h2>
+        <p class="l-ja" lang="ja">中皿を外すと、深い空洞がある。</p>
+        <p class="l-en" lang="en">Take off the base cup and there’s a deep cavity.</p>
+      </div>
+    </section>
+    <section class="cap" data-from="112" data-to="127" data-step="05">
+      <div class="inner">
+        <p class="eyebrow">Luna hole</p>
+        <h2 class="h-ja l-ja" lang="ja">ふさいで、<br>完成する。</h2>
+        <h2 class="h-en l-en" lang="en">Complete once it’s filled.</h2>
+        <p class="l-ja" lang="ja">ルナホールは、TPUの中皿でふさぐことを前提に大きさを決めている。あとから蓋をするのではなく、ふさいだ後の重さまで重量配分に組み込んでいる。</p>
+        <p class="l-en" lang="en">The luna hole is sized from the start for the TPU base cup that fills it. It isn’t capped as an afterthought: the weight after filling is part of the balance.</p>
+        <p class="touch l-ja" lang="ja">この先は、手に取って確かめて。</p>
+        <p class="touch l-en" lang="en">The rest, you’ll have to feel for yourself.</p>
+      </div>
+    </section>
+    <section class="cap" data-from="128" data-to="149" data-step="06">
+      <div class="inner">
+        <p class="eyebrow">Quick tune</p>
+        <h2 class="h-ja l-ja" lang="ja">2つのストリングホール。</h2>
+        <h2 class="h-en l-en" lang="en">Two string holes.</h2>
+        <p class="l-ja" lang="ja">まっすぐ抜ける穴と、斜めに抜ける穴。紐の長さを簡単に変えられる。</p>
+        <p class="l-en" lang="en">One runs straight through, one at an angle. Adjusting string length is easy.</p>
+      </div>
+    </section>
+    <section class="cap" data-from="150" data-to="161" data-step="07">
+      <div class="inner">
+        <p class="eyebrow">Get PLAKEN</p>
+        <h2 class="h-en">HOLLOW Frame V2</h2>
+        <p class="price l-ja" lang="ja">¥5,500（剣のみ）</p>
+        <p class="price l-en" lang="en">¥5,500 (ken only)</p>
+        <div class="buy l-ja">
+          <a class="btn solid" href="https://edex-kendama.stores.jp/">購入する</a>
+          <a class="btn line" href="https://fanken.jp/collections/edex-kendama-%E6%97%A5%E6%9C%AC">海外の方は FANKEN へ</a>
+        </div>
+        <div class="buy l-en">
+          <a class="btn solid" href="https://fanken.jp/en/collections/edex-kendama-%E6%97%A5%E6%9C%AC">Buy at FANKEN</a>
+          <a class="btn line" href="https://edex-kendama.stores.jp/">In Japan? Our STORES shop</a>
+        </div>
+      </div>
+    </section>
+    <p class="hint" id="hint" aria-hidden="true">SCROLL ↓</p>
+  </div>
+</div>
+
+<section class="band" id="log" aria-labelledby="log-title">
+  <div class="wrap">
+    <div class="intro">
+      <p class="eyebrow">Development log</p>
+      <h2 id="log-title"><span class="h-ja l-ja" lang="ja" style="display:block">どのバージョンも、<br>ひとつの実験。</span><span class="h-en l-en" lang="en" style="display:block">Every version is an experiment.</span></h2>
+      <p class="lead l-ja" lang="ja">一度に変えるのはひとつだけ。遊んで、測って、良かったものを残す。</p>
+      <p class="lead l-en" lang="en">Change one thing. Play it. Measure it. Keep what works.</p>
+    </div>
+    <div class="cards">
+      <article class="card latest">
+        <div class="shots wide">
+          <img src="img/v2-stripe-tama.webp" width="1200" height="900" loading="lazy" data-alt-ja="HOLLOW Frame V2（黒ライン）を玉の上にのせたところ" data-alt-en="HOLLOW Frame V2 with black stripes, balanced on its tama" alt="">
+        </div>
+        <div class="card-body">
+          <div class="meta">
+            <p class="date"><span class="l-ja">2026.09.19 発売</span><span class="l-en">RELEASED 2026.09.19</span></p>
+            <span class="badge solid">LATEST</span>
+          </div>
+          <h3>HOLLOW Frame V2</h3>
+          <ul class="feats l-ja" lang="ja">
+            <li>けん先にカテナリー曲線（ハードスパイク対策）</li>
+            <li>V1より滑らかな皿胴。風車で指が通る、剣軸へのつながり</li>
+            <li>フリップ・風車・月面を基準に、重さの置き場所を10回以上調整</li>
+          </ul>
+          <ul class="feats l-en" lang="en">
+            <li>Catenary-curve spike tip, shaped for hard spikes</li>
+            <li>Smoother sarado that flows into the shaft, for windmill</li>
+            <li>Weight placement tuned 10+ times around flip, windmill and moon</li>
+          </ul>
+          <dl class="specs">
+            <div><dt class="l-ja">大皿</dt><dt class="l-en">BIG CUP</dt><dd>51 mm</dd></div>
+            <div><dt class="l-ja">小皿</dt><dt class="l-en">SMALL CUP</dt><dd>51 mm</dd></div>
+            <div><dt class="l-ja">剣の長さ</dt><dt class="l-en">KEN LENGTH</dt><dd>165 mm</dd></div>
+            <div><dt class="l-ja">皿胴の幅</dt><dt class="l-en">SARADO WIDTH</dt><dd>75 mm</dd></div>
+            <div><dt class="l-ja">中皿の最大径</dt><dt class="l-en">BASE CUP (MAX)</dt><dd>42 mm</dd></div>
+            <div><dt class="l-ja">けん先の幅</dt><dt class="l-en">SPIKE WIDTH</dt><dd>10 mm</dd></div>
+            <div class="full"><dt class="l-ja">重さ</dt><dt class="l-en">WEIGHT</dt><dd><span class="l-ja">約83–84 g</span><span class="l-en">≈ 83–84 g</span></dd></div>
+          </dl>
+          <a class="btn line wide" href="#structure"><span class="l-ja">V2の構造を見る ↑</span><span class="l-en">See inside V2 ↑</span></a>
+          <div class="l-ja">
+            <a class="btn solid wide" href="https://edex-kendama.stores.jp/">購入する</a>
+          </div>
+          <div class="l-en">
+            <a class="btn solid wide" href="https://fanken.jp/en/collections/edex-kendama-%E6%97%A5%E6%9C%AC">Buy at FANKEN</a>
+          </div>
+          <p class="small l-ja" lang="ja">STORESで購入できます。¥5,500（剣のみ）。</p>
+          <p class="small l-en" lang="en">Sold through FANKEN, our partner shop in Japan. Inside Japan you can also use <a href="https://edex-kendama.stores.jp/">our STORES shop</a>.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="shots tall" tabindex="0" data-label-ja="HOLLOW Frame V1の写真。横にスクロールで続きを表示" data-label-en="HOLLOW Frame V1 photos. Scroll sideways for more.">
+          <img src="img/v1-front.webp" width="960" height="1200" loading="lazy" data-alt-ja="HOLLOW Frame V1の正面" data-alt-en="HOLLOW Frame V1, front view" alt="">
+          <img src="img/v1-angle.webp" width="900" height="1200" loading="lazy" data-alt-ja="HOLLOW Frame V1を斜めから。白黒の模様" data-alt-en="HOLLOW Frame V1, angled view showing the black and white pattern" alt="">
+          <img src="img/v1-top.webp" width="1200" height="900" loading="lazy" data-alt-ja="HOLLOW Frame V1をけん先側の真上から" data-alt-en="HOLLOW Frame V1 seen from above, along the spike" alt="">
+          <img src="img/v1-float.webp" width="900" height="1200" loading="lazy" data-alt-ja="HOLLOW Frame V1の大皿の寄り" data-alt-en="HOLLOW Frame V1, close-up of the big cup" alt="">
+        </div>
+        <p class="swipe"><span class="l-ja">横にスワイプ → · 写真4枚</span><span class="l-en">SWIPE → · 4 PHOTOS</span></p>
+        <div class="card-body">
+          <div class="meta">
+            <p class="date"><span class="l-ja">2026.05.26 発売</span><span class="l-en">RELEASED 2026.05.26</span></p>
+            <span class="badge line l-ja">STORESは売り切れ</span>
+          </div>
+          <h3>HOLLOW Frame V1</h3>
+          <ul class="feats l-ja" lang="ja">
+            <li>最初のPLAKEN</li>
+            <li>皿胴とけんが一体</li>
+            <li>えぐり形状の皿胴</li>
+          </ul>
+          <ul class="feats l-en" lang="en">
+            <li>The first PLAKEN</li>
+            <li>Sarado and ken in one piece</li>
+            <li>Scooped-out sarado</li>
+          </ul>
+          <a class="btn line wide" href="v1.html" data-v1link><span class="l-ja">V1の構造を見る（アーカイブ）</span><span class="l-en">See inside V1 (archive)</span></a>
+          <a class="btn line wide l-ja" href="https://fanken.jp/collections/edex-kendama-%E6%97%A5%E6%9C%AC">FANKENで購入（白・黒）</a>
+          <a class="btn line wide l-en" href="https://fanken.jp/en/collections/edex-kendama-%E6%97%A5%E6%9C%AC">Buy V1 at FANKEN · white / black</a>
+        </div>
+      </article>
+    </div>
+    <a class="rowlink" href="https://note.com/edex_kendama"><span><span class="l-ja">開発の記録をnoteで読む</span><span class="l-en">Read the full log on note <span class="note">(Japanese)</span></span></span><span class="arrow" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<section class="band" id="tap" aria-labelledby="tap-title">
+  <div class="wrap">
+    <div class="tap">
+      <div class="tap-text">
+        <p class="eyebrow">Tap Lab</p>
+        <h2 id="tap-title"><span class="h-ja l-ja" lang="ja" style="display:block">Tapの壁を、<br>理論で越える。</span><span class="h-en l-en" lang="en" style="display:block">Break the Tap wall.</span></h2>
+        <p class="lead l-ja" lang="ja">Tapは4回できれば十分うまい部類で、10回を超える大人はほとんどいない。Tap Labは、縮尺どおりの図でTapの動きを分解するウェブアプリ。玉・剣先・中皿・重心のどれかひとつに絞って、1回ごとに何が起きているかを確かめられる。自分の動画から測った値を入れれば、図が自分のタップに近づく。お手本の音に合わせる練習もできる。</p>
+        <p class="lead l-en" lang="en">In Tap, four is already good and few adults ever pass ten. Tap Lab is a web app that breaks the motion down in a to-scale drawing. Pick one thing to watch, the tama, spike, base cup or center of gravity, and see what it does on every tap. Enter values from your own video and the drawing moves closer to your tap. You can also practice along with a guide sound.</p>
+        <a class="btn solid open-tap" href="tap-lab.html" data-taplab><span class="l-ja">Tap Labを開く</span><span class="l-en">Open Tap Lab</span> <span aria-hidden="true">→</span></a>
+      </div>
+      <figure class="bars">
+        <div class="cols" aria-hidden="true">
+          <div class="col"><span>4</span><span style="height:44px;background:#3a3a38"></span></div>
+          <div class="col"><span>6</span><span style="height:68px;background:#5e5e5b"></span></div>
+          <div class="col"><span>8</span><span style="height:92px;background:#a3a3a0"></span></div>
+          <div class="col"><span style="color:var(--fg)">10</span><span style="height:116px;background:var(--fg)"></span></div>
+        </div>
+        <figcaption><span class="l-ja">回数はだいたい2回ずつ伸びていく。大事なのは、1回ずつをどれだけきれいに当てるか。</span><span class="l-en">Most players climb two taps at a time. How cleanly each tap lands is what counts.</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="buy" aria-labelledby="buy-title">
+  <div class="wrap">
+    <div class="intro">
+      <p class="eyebrow">Where to buy</p>
+      <h2 id="buy-title"><span class="h-ja l-ja" lang="ja" style="display:block">PLAKENを手に入れる</span><span class="h-en l-en" lang="en" style="display:block">Get a PLAKEN.</span></h2>
+    </div>
+    <div class="shops l-ja">
+      <a class="shop solid" href="https://edex-kendama.stores.jp/">
+        <span class="txt"><span class="where l-ja">日本国内</span><span class="name">EDEX Store</span><span class="desc">V2 ¥5,500（剣のみ）· 国内発送のみ</span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="shop line" href="https://fanken.jp/collections/edex-kendama-%E6%97%A5%E6%9C%AC">
+        <span class="txt"><span class="where l-ja">海外</span><span class="name">FANKEN</span><span class="desc">海外の方はこちら。V1もここで買えます</span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+    <div class="shops l-en">
+      <a class="shop solid" href="https://fanken.jp/en/collections/edex-kendama-%E6%97%A5%E6%9C%AC">
+        <span class="txt"><span class="where">OUTSIDE JAPAN</span><span class="name">FANKEN</span><span class="desc">Our overseas partner shop</span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="shop line" href="https://edex-kendama.stores.jp/">
+        <span class="txt"><span class="where">IN JAPAN</span><span class="name">EDEX Store</span><span class="desc">Ships within Japan only</span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+    <a class="rowlink" href="mailto:edexkendama@gmail.com"><span><span class="l-ja">販売店・代理店のご相談</span><span class="l-en">Shops and distributors: get in touch</span></span><span class="arrow" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<section class="band" id="follow" aria-labelledby="follow-title">
+  <div class="wrap">
+    <div class="intro">
+      <p class="eyebrow">Follow</p>
+      <h2 id="follow-title"><span class="h-ja l-ja" lang="ja" style="display:block">次の実験を、<br>いちばん早く。</span><span class="h-en l-en" lang="en" style="display:block">See the next experiment first.</span></h2>
+    </div>
+    <nav class="links" aria-label="Links">
+      <a href="https://www.instagram.com/edex_kendama"><span class="t"><b>Instagram</b><span class="mono">@edex_kendama</span></span><span aria-hidden="true">→</span></a>
+      <a href="https://x.com/edex_kendama"><span class="t"><b>X</b><span class="mono">@edex_kendama</span></span><span aria-hidden="true">→</span></a>
+      <a href="https://note.com/edex_kendama"><span class="t"><b>note</b><span class="l-ja">開発の記録</span><span class="l-en">Development notes (Japanese)</span></span><span aria-hidden="true">→</span></a>
+      <a href="mailto:edexkendama@gmail.com"><span class="t"><b class="l-ja">お問い合わせ</b><b class="l-en">Contact</b><span class="mono">edexkendama@gmail.com</span></span><span aria-hidden="true">→</span></a>
+    </nav>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <img class="stack" src="img/edex-stack-white.png" alt="EDEX Kendama" width="426" height="480">
+    <div class="fine">
+      <p class="l-ja" lang="ja">スクロールの画像は3Dモデルから描いたものです。実物は積層の跡や色の出方が少し異なります。</p>
+      <p class="l-en" lang="en">The scroll images are rendered from the 3D model. Real units show layer lines and slight color differences.</p>
+      <p class="mono">edexkendama.com · © 2026 EDEX Kendama</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- language ---------- */
+  var langBtns = Array.prototype.slice.call(document.querySelectorAll('[data-set-lang]'));
+  function applyLang(l) {
+    root.setAttribute('data-lang', l); root.lang = l;
+    langBtns.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-set-lang') === l ? 'true' : 'false'); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-alt-' + l + ']'), function (el) { el.alt = el.getAttribute('data-alt-' + l); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-label-' + l + ']'), function (el) { el.setAttribute('aria-label', el.getAttribute('data-label-' + l)); });
+    /* open Tap Lab in the same language as the site */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-taplab]'), function (el) { el.setAttribute('href', 'tap-lab.html#' + l); });
+    /* the V1 archive page follows the same language */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-v1link]'), function (el) { el.setAttribute('href', 'v1.html#' + l); });
+  }
+  langBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var l = b.getAttribute('data-set-lang');
+      applyLang(l);
+      try { localStorage.setItem('edex-lang', l); } catch (e) {}
+      if (location.hash === '#en' || location.hash === '#ja') { try { history.replaceState(null, '', '#' + l); } catch (e) {} }
+    });
+  });
+  applyLang(root.getAttribute('data-lang') || 'ja');
+
+  /* ---------- scroll stage ---------- */
+  var N = 162;
+  var track = document.getElementById('structure'), stage = document.getElementById('stage');
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var bar = document.getElementById('sbar'), stepEl = document.getElementById('step');
+  var hint = document.getElementById('hint'), skip = document.getElementById('skip'), sload = document.getElementById('sload');
+  var caps = Array.prototype.slice.call(document.querySelectorAll('.cap'));
+  var imgs = new Array(N), ready = new Array(N), current = 0, drawn = -1, started = false, near = false;
+
+  function pad(i) { return ('00' + i).slice(-3); }
+  function start() {
+    if (started) return; started = true;
+    var next = 1, active = 0, MAX = 6;
+    function one(i) {
+      active++;
+      var im = new Image(); im.decoding = 'async';
+      im.onload = function () { ready[i] = true; active--; if (drawn < 0 || Math.abs(i - current) <= 2) draw(true); pump(); };
+      im.onerror = function () { active--; pump(); };
+      im.src = 'frames/v2/f' + pad(i) + '.webp'; imgs[i] = im;
+    }
+    function pump() { while (active < MAX && next < N) one(next++); }
+    one(0); pump();
+  }
+  /* load only after the top of the page is done and the stage is getting close */
+  var pageLoaded = document.readyState === 'complete';
+  function maybeStart() { if (pageLoaded && near) start(); }
+  window.addEventListener('load', function () { pageLoaded = true; maybeStart(); });
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { near = true; maybeStart(); io.disconnect(); } });
+    }, { rootMargin: '0px 0px 75% 0px' });
+    io.observe(track);
+  } else { near = true; maybeStart(); }
+
+  function nearest(i) {
+    for (var d = 0; d < N; d++) {
+      if (i - d >= 0 && ready[i - d]) return i - d;
+      if (i + d < N && ready[i + d]) return i + d;
+    }
+    return -1;
+  }
+  function size() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.max(1, Math.round(cv.clientWidth * dpr)); cv.height = Math.max(1, Math.round(cv.clientHeight * dpr));
+    draw(true);
+  }
+  function draw(force) {
+    var k = nearest(current);
+    if (k < 0) return;
+    if (!force && k === drawn) return;
+    sload.hidden = true;
+    var im = imgs[k], W = cv.width, H = cv.height;
+    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, W, H);
+    var tall = H / W > 1.3;
+    var s = Math.min(W / im.naturalWidth, H / im.naturalHeight);
+    if (tall) s = Math.max(s, Math.min(W / im.naturalWidth * 1.08, H / im.naturalHeight));
+    var w = im.naturalWidth * s, h = im.naturalHeight * s;
+    ctx.drawImage(im, (W - w) / 2, (H - h) * (tall ? 0.32 : 0.5), w, h);
+    drawn = k;
+  }
+  function update() {
+    var r = track.getBoundingClientRect(), span = track.offsetHeight - window.innerHeight;
+    var p = Math.min(Math.max(-r.top / Math.max(span, 1), 0), 1);
+    var f = Math.round(p * (N - 1));
+    bar.style.width = (p * 100).toFixed(2) + '%';
+    hint.style.opacity = f < 3 ? 1 : 0;
+    var inView = r.top < window.innerHeight && r.bottom > 0;
+    if (inView && drawn < 0) { sload.hidden = false; if (!started) { near = true; pageLoaded = true; start(); } }
+    if (f !== current) { current = f; draw(false); }
+    caps.forEach(function (c) {
+      var on = f >= +c.getAttribute('data-from') && f <= +c.getAttribute('data-to');
+      c.classList.toggle('on', on);
+      if (on) stepEl.textContent = c.getAttribute('data-step') + ' / 07';
+    });
+    var last = f >= 150;
+    skip.style.opacity = last ? 0 : 1;
+    skip.style.pointerEvents = last ? 'none' : 'auto';
+    skip.tabIndex = last ? -1 : 0;
+  }
+  skip.addEventListener('click', function (e) {
+    var t = document.getElementById('log');
+    if (!t) return;
+    e.preventDefault();
+    t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  });
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(function () { ticking = false; update(); });
+  }, { passive: true });
+  window.addEventListener('resize', function () { size(); update(); });
+  size(); update();
+})();
+</script>
+</body>
+</html>
