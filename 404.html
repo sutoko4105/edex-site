@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Page not found · EDEX Kendama</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script>
+/* same language rule as the rest of the site: #ja/#en > saved choice > device language */
+(function () {
+  var lang = null, h = (location.hash || '').slice(1).toLowerCase();
+  if (h === 'en' || h === 'ja') lang = h;
+  if (!lang) { try { var s = localStorage.getItem('edex-lang'); if (s === 'en' || s === 'ja') lang = s; } catch (e) {} }
+  if (!lang) { var L = (navigator.languages && navigator.languages[0]) || navigator.language || ''; lang = /^ja\b/i.test(L) ? 'ja' : 'en'; }
+  document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.lang = lang;
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* Layout: one centred block on the same dark ground as the site: mark, 404, a short line, the way back. */
+:root {
+  --ground: #0a0a0a; --fg: #f2f2f0; --soft: #cfcfcb; --muted: #a3a3a0; --line-2: #3a3a38;
+  --display: "Archivo", "IBM Plex Sans JP", system-ui, sans-serif;
+  --body: "IBM Plex Sans JP", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--ground); }
+body { margin: 0; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; justify-content: center; color: var(--fg); font-family: var(--body); line-height: 1.7; -webkit-font-smoothing: antialiased; padding: 48px max(20px, env(safe-area-inset-left, 0px)); }
+html[data-lang="ja"] .l-en, html[data-lang="en"] .l-ja, html:not([data-lang]) .l-en { display: none !important; }
+main { width: 100%; max-width: 440px; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+.mark { width: 44px; height: auto; display: block; }
+.code { margin: 0; font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; color: var(--muted); }
+h1 { margin: 0; font-family: var(--display); font-stretch: 75%; font-weight: 800; font-size: clamp(40px, 11vw, 64px); line-height: 1; }
+h1.l-ja { font-family: var(--body); font-weight: 700; font-size: clamp(28px, 7.5vw, 40px); line-height: 1.3; }
+p { margin: 0; color: var(--soft); }
+.btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px; border-radius: 2px; text-decoration: none; font-weight: 700; }
+.btn.solid { background: var(--fg); color: var(--ground); }
+.btn.line { border: 1px solid var(--line-2); color: var(--fg); font-weight: 500; }
+a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <a href="/" aria-label="EDEX Kendama"><img class="mark" src="/img/edex-mark-white.png" alt="" width="163" height="240"></a>
+  <p class="code">404</p>
+  <h1 class="l-ja" lang="ja">ページが<br>見つかりませんでした。</h1>
+  <h1 class="l-en" lang="en">Nothing here.</h1>
+  <p class="l-ja" lang="ja">URLが変わったか、打ち間違いかもしれません。</p>
+  <p class="l-en" lang="en">The address may have changed, or there’s a typo in it.</p>
+  <div class="btns l-ja">
+    <a class="btn solid" href="/">トップへ戻る</a>
+    <a class="btn line" href="/tap-lab.html#ja">Tap Lab</a>
+  </div>
+  <div class="btns l-en">
+    <a class="btn solid" href="/">Back to the top</a>
+    <a class="btn line" href="/tap-lab.html#en">Tap Lab</a>
+  </div>
+</main>
+</body>
+</html>

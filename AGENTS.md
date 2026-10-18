@@ -11,6 +11,10 @@ PLAKEN（3Dプリントのけん玉）のブランド EDEX Kendama の公式サ�
 - `tap-lab.html`：Tap Lab（Tapを縮尺どおりの図で分解するウェブアプリ）。単体で動く。
 - `img/`：ロゴと実物写真。`og.jpg` はSNSで共有したときの画像。
 - `frames/v2/f000.webp`〜`f161.webp`、`frames/v1/f000.webp`〜`f161.webp`：スクロール版のコマ（162枚ずつ）。
+- `404.html`：存在しないURLのときに出るページ。どの階層のURLでも表示されるので、中の画像やリンクは `/` から始まる書き方にしている。
+- `favicon.ico`・`apple-touch-icon.png`・`icon-192.png`：ブラウザのタブとスマホのホーム画面のアイコン（EDEXのマーク）。
+- `sitemap.xml`・`robots.txt`：検索エンジン向け。ページを足したら `sitemap.xml` にも足す。
+- `CNAME`：独自ドメイン edexkendama.com の設定。GitHub が管理しているので消さない。
 
 ## 言語
 
