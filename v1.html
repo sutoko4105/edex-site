@@ -201,6 +201,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .foot .fine p { margin: 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
 .foot .fine .mono { font-family: var(--mono); letter-spacing: 0.06em; }
 
+.gc-note { display: none; } html.gc-on .gc-note:not(.l-en), html.gc-on[data-lang="en"] .gc-note.l-en { display: block; }
 @media (prefers-reduced-motion: reduce) { .cap { transition: none; transform: none; } html { scroll-behavior: auto; } }
 /* V1 archive page */
 .backlink { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border: 1px solid #333331; border-radius: 3px; font-size: 14px; color: var(--fg); text-decoration: none; white-space: nowrap; }
@@ -354,11 +355,45 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     <div class="fine">
       <p class="l-ja" lang="ja">スクロールの画像は3Dモデルから形だけを描いたものです。実物は模様や積層の跡があります。</p>
       <p class="l-en" lang="en">The scroll images are rendered from the 3D model, shape only. Real units have a pattern and layer lines.</p>
+      <p class="gc-note l-ja" lang="ja">訪問数は、クッキーを使わないアクセス解析（GoatCounter）で数えています。個人を特定する情報は集めていません。</p>
+      <p class="gc-note l-en" lang="en">Visits are counted with GoatCounter, which uses no cookies and collects no personal data.</p>
       <p class="mono">edexkendama.com · © 2026 EDEX Kendama</p>
     </div>
   </div>
 </footer>
 
+<script>
+/* Visit counting with GoatCounter: no cookies, no personal data, and only on edexkendama.com.
+   Clicks on shop / SNS / Tap Lab links are counted as events named click/<what>/<where>/<lang>. */
+(function () {
+  var CODE = '';  /* GoatCounter site code (the part before .goatcounter.com). Empty = counting off. */
+  var on = !!CODE && location.hostname === 'edexkendama.com';
+  window.edexTrack = function (name) {
+    if (!on || !window.goatcounter || !window.goatcounter.count) return;
+    var lang = document.documentElement.getAttribute('data-lang') || 'ja';
+    window.goatcounter.count({ path: name + '/' + lang, title: name, event: true });
+  };
+  if (!on) return;
+  document.documentElement.classList.add('gc-on');
+  var s = document.createElement('script');
+  s.async = true; s.src = 'https://gc.zgo.at/count.js';
+  s.setAttribute('data-goatcounter', 'https://' + CODE + '.goatcounter.com/count');
+  document.head.appendChild(s);
+  var kinds = [[/stores\.jp/, 'buy-stores'], [/fanken\.jp/, 'buy-fanken'], [/instagram\.com/, 'follow-instagram'],
+               [/\/\/(www\.)?x\.com/, 'follow-x'], [/note\.com/, 'note'], [/^mailto:/, 'contact'],
+               [/tap-lab\.html/, 'open-taplab'], [/v1\.html/, 'open-v1']];
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href'), kind = null;
+    for (var i = 0; i < kinds.length; i++) if (kinds[i][0].test(href)) { kind = kinds[i][1]; break; }
+    if (!kind) return;
+    var sec = a.closest('.track, section:not(.cap), header, footer');
+    var where = sec ? (sec.id || (sec.className || '').split(' ')[0] || sec.tagName.toLowerCase()) : 'page';
+    window.edexTrack('click/' + kind + '/' + where);
+  }, true);
+})();
+</script>
 <script>
 (function () {
   var root = document.documentElement;
@@ -448,6 +483,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
       if (on) stepEl.textContent = c.getAttribute('data-step') + ' / ' + STEPS;
     });
     var last = f >= LAST;
+    if (last && !window.__edexEnd) { window.__edexEnd = 1; if (window.edexTrack) window.edexTrack('scroll/v1-end'); }
     skip.style.opacity = last ? 0 : 1;
     skip.style.pointerEvents = last ? 'none' : 'auto';
     skip.tabIndex = last ? -1 : 0;

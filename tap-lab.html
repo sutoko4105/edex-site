@@ -1,4 +1,35 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="canonical" href="https://edexkendama.com/tap-lab.html"></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="canonical" href="https://edexkendama.com/tap-lab.html"><script>
+/* Visit counting with GoatCounter: no cookies, no personal data, and only on edexkendama.com.
+   Clicks on shop / SNS / Tap Lab links are counted as events named click/<what>/<where>/<lang>. */
+(function () {
+  var CODE = '';  /* GoatCounter site code (the part before .goatcounter.com). Empty = counting off. */
+  var on = !!CODE && location.hostname === 'edexkendama.com';
+  window.edexTrack = function (name) {
+    if (!on || !window.goatcounter || !window.goatcounter.count) return;
+    var lang = document.documentElement.getAttribute('data-lang') || 'ja';
+    window.goatcounter.count({ path: name + '/' + lang, title: name, event: true });
+  };
+  if (!on) return;
+  document.documentElement.classList.add('gc-on');
+  var s = document.createElement('script');
+  s.async = true; s.src = 'https://gc.zgo.at/count.js';
+  s.setAttribute('data-goatcounter', 'https://' + CODE + '.goatcounter.com/count');
+  document.head.appendChild(s);
+  var kinds = [[/stores\.jp/, 'buy-stores'], [/fanken\.jp/, 'buy-fanken'], [/instagram\.com/, 'follow-instagram'],
+               [/\/\/(www\.)?x\.com/, 'follow-x'], [/note\.com/, 'note'], [/^mailto:/, 'contact'],
+               [/tap-lab\.html/, 'open-taplab'], [/v1\.html/, 'open-v1']];
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href'), kind = null;
+    for (var i = 0; i < kinds.length; i++) if (kinds[i][0].test(href)) { kind = kinds[i][1]; break; }
+    if (!kind) return;
+    var sec = a.closest('.track, section:not(.cap), header, footer');
+    var where = sec ? (sec.id || (sec.className || '').split(' ')[0] || sec.tagName.toLowerCase()) : 'page';
+    window.edexTrack('click/' + kind + '/' + where);
+  }, true);
+})();
+</script></head><body>
 <title>Tap Lab 練習ビュー</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

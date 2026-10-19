@@ -35,7 +35,7 @@ PLAKEN（3Dプリントのけん玉）のブランド EDEX Kendama の公式サ�
 - 断面図や内部構造（インフィル）を見せない。
 - ルナホールの形について書かない（形はモデルごとに違う）。重さの公差は載せない。
 - 「どのけん玉にもない」と言い切らない。使ってよい言い方は「現行の実用的なけん玉では、ほかに見ない形」。
-- 解析タグや広告タグを勝手に足さない。
+- アクセス解析は GoatCounter（クッキーなし・個人情報なし）だけを使う。ほかの解析タグや広告タグは足さない。
 
 ## 購入リンク
 
@@ -58,3 +58,14 @@ PLAKEN（3Dプリントのけん玉）のブランド EDEX Kendama の公式サ�
 - JP/EN の切り替え、`#ja` / `#en` 付きのURL。
 - コンソールに 404 やエラーがない（コマが全部読める）。
 - スクロールでキャプションが 01〜07 の順に切り替わり、最後に購入ボタンが出る。
+
+## アクセス解析（GoatCounter）
+
+- 各ページの `var CODE = '...'` に GoatCounter のサイトコードを入れると数え始める（空なら止まる）。edexkendama.com 以外（プレビューや手元）では数えない。
+- ページの表示は自動で数える。名刺のQRは `https://edexkendama.com/?campaign=card` にしてあり、GoatCounter の Campaigns に「card」として出る。
+- クリックはイベントとして数える。名前は `click/<何>/<場所>/<言語>`。
+  - 何：`buy-stores`・`buy-fanken`・`follow-instagram`・`follow-x`・`note`・`contact`・`open-taplab`・`open-v1`
+  - 場所：`structure`（スクロール版）・`log`（開発ログ）・`buy`（購入先）・`follow`・`hero`・`header` など
+- スクロール版を最後まで見た人は `scroll/v2-end/<言語>`（V1ページは `scroll/v1-end/<言語>`）。
+- 新しいリンクの種類を足したら、ページ内の `kinds` の一覧にも足す。
+
