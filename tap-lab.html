@@ -2,7 +2,7 @@
 /* Visit counting with GoatCounter: no cookies, no personal data, and only on edexkendama.com.
    Clicks on shop / SNS / Tap Lab links are counted as events named click/<what>/<where>/<lang>. */
 (function () {
-  var CODE = '';  /* GoatCounter site code (the part before .goatcounter.com). Empty = counting off. */
+  var CODE = 'edexkendama';  /* GoatCounter site code (the part before .goatcounter.com). Empty = counting off. */
   var on = !!CODE && location.hostname === 'edexkendama.com';
   window.edexTrack = function (name) {
     if (!on || !window.goatcounter || !window.goatcounter.count) return;

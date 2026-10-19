@@ -61,7 +61,9 @@ PLAKEN（3Dプリントのけん玉）のブランド EDEX Kendama の公式サ�
 
 ## アクセス解析（GoatCounter）
 
-- 各ページの `var CODE = '...'` に GoatCounter のサイトコードを入れると数え始める（空なら止まる）。edexkendama.com 以外（プレビューや手元）では数えない。
+- 各ページ（`index.html`・`v1.html`・`tap-lab.html`）の `var CODE = 'edexkendama'` が GoatCounter のサイトコード（edexkendama.goatcounter.com）。空にすると止まる。edexkendama.com 以外（プレビューや手元）では数えない。
+- GoatCounter 公式の `<script data-goatcounter=...>` タグは貼らない（二重に数える。読み込みはこの `CODE` の仕組みで済んでいる）。
+- 自分の端末を数えないようにするには、その端末で `https://edexkendama.com/#toggle-goatcounter` を一度開く（もう一度開くと元に戻る）。
 - ページの表示は自動で数える。名刺のQRは `https://edexkendama.com/?campaign=card` にしてあり、GoatCounter の Campaigns に「card」として出る。
 - クリックはイベントとして数える。名前は `click/<何>/<場所>/<言語>`。
   - 何：`buy-stores`・`buy-fanken`・`follow-instagram`・`follow-x`・`note`・`contact`・`open-taplab`・`open-v1`
