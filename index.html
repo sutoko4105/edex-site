@@ -733,11 +733,15 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   }
   function update() {
     var r = track.getBoundingClientRect(), span = track.offsetHeight - window.innerHeight;
-    var p = Math.min(Math.max(-r.top / Math.max(span, 1), 0), 1);
-    var f = Math.round(p * (N - 1));
-    bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
     var inView = r.top < window.innerHeight && r.bottom > 0;
     if (inView && drawn < 0) { sload.hidden = false; if (!started) { near = true; pageLoaded = true; start(); } }
+    if (playing) return;  /* a NEXT jump is drawing the frames itself */
+    show(Math.min(Math.max(-r.top / Math.max(span, 1), 0), 1) * (N - 1));
+  }
+  function show(fp) {
+    shown = fp;
+    var p = fp / (N - 1), f = Math.round(fp);
+    bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
     if (f !== current || keepHi < 0) { current = f; draw(false); keep(f - 5, f + 9); }
     var idx = -1;
     caps.forEach(function (c, i) {
@@ -768,13 +772,21 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
      pace. Safari's built-in smooth scroll is very fast and skipped frames, so the model
      seemed to jerk. Each animation step recomputes the position from the frame number, so a
      change in visible height (address bar) cannot leave the jump on the previous caption. */
-  var cueAnim = 0;
+  var cueAnim = 0, playing = false, shown = 0;
   function frameTop(fr) {
     var span = track.offsetHeight - window.innerHeight;
     return window.scrollY + track.getBoundingClientRect().top + fr / (N - 1) * span;
   }
+  function settle(fr) {  /* put the real scroll position where the drawn frame is */
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo(0, Math.round(frameTop(fr)));
+    document.documentElement.style.scrollBehavior = '';
+  }
   function cueCancel() {
-    if (cueAnim) { cancelAnimationFrame(cueAnim); cueAnim = 0; document.documentElement.style.scrollBehavior = ''; pathLo = 0; pathHi = -1; }
+    if (!cueAnim) return;
+    cancelAnimationFrame(cueAnim); cueAnim = 0;
+    if (playing) { playing = false; settle(shown); }
+    pathLo = 0; pathHi = -1;
   }
   function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
   cue.addEventListener('click', function () {
@@ -789,13 +801,14 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     pathLo = Math.floor(Math.min(from, to)) - 1; pathHi = Math.ceil(Math.max(from, to)) + 1;
     keep(keepLo, keepHi);
     var dur = Math.min(Math.max(450 + Math.abs(to - from) * 40, 700), 1500), t0 = 0;
-    document.documentElement.style.scrollBehavior = 'auto';
     function step(now) {
-      if (!t0) t0 = now;
+      if (!t0) { t0 = now; playing = true; }
       var t = Math.min((now - t0) / dur, 1);
-      window.scrollTo(0, Math.round(frameTop(from + (to - from) * ease(t))));
-      if (t < 1) cueAnim = requestAnimationFrame(step);
-      else { cueAnim = 0; document.documentElement.style.scrollBehavior = ''; pathLo = 0; pathHi = -1; keep(current - 5, current + 9); }
+      show(from + (to - from) * ease(t));
+      if (t < 1) { cueAnim = requestAnimationFrame(step); return; }
+      cueAnim = 0; playing = false;
+      settle(to);
+      pathLo = 0; pathHi = -1; keep(current - 5, current + 9);
     }
     var w0 = 0;
     function wait(now) {
