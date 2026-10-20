@@ -100,7 +100,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 54%; background: linear-gradient(to top, rgba(10,10,10,0.94) 0%, rgba(10,10,10,0.78) 40%, rgba(10,10,10,0.35) 72%, rgba(10,10,10,0) 100%); pointer-events: none; }
 .progress { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--line); z-index: 3; }
-.progress span { display: block; height: 100%; width: 0; background: var(--fg); }
+.progress span { display: block; height: 100%; width: 100%; background: var(--fg); transform: scaleX(0); transform-origin: 0 50%; will-change: transform; }
 .sbar { position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .sbar .brand { display: flex; align-items: center; gap: 10px; }
 .sbar .brand .mark { height: 32px; width: auto; }
@@ -132,6 +132,9 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .cue:hover .cue-arrow { border-color: var(--fg); }
 .cue:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
 @media (prefers-reduced-motion: reduce) { .cue-arrow { animation: none; } }
+/* keep text layers off the canvas repaint path (the canvas changes every frame) */
+.cap, .cue { will-change: opacity, transform; }
+.stage::after { will-change: transform; }
 /* short phones (iPhone SE and smaller): tighter captions so they clash less with the model; a soft shadow keeps text readable where they still overlap */
 .cap h2, .cap p, .cap .eyebrow { text-shadow: 0 0 14px rgba(10,10,10,0.85), 0 1px 2px rgba(10,10,10,0.9); }
 @media (max-height: 700px) and (max-width: 600px) {
@@ -651,6 +654,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   var cue = document.getElementById('cue'), cueNum = document.getElementById('cue-num'), cueJa = document.getElementById('cue-ja'), cueEn = document.getElementById('cue-en'), cueFor = null, skip = document.getElementById('skip'), sload = document.getElementById('sload');
   var caps = Array.prototype.slice.call(document.querySelectorAll('.cap'));
   var imgs = new Array(N), ready = new Array(N), current = 0, drawn = -1, started = false, near = false;
+  var bmp = new Array(N), bmpBusy = new Array(N), keepLo = 0, keepHi = -1, pathLo = 0, pathHi = -1, canBmp = typeof createImageBitmap === 'function';
 
   function pad(i) { return ('00' + i).slice(-3); }
   function start() {
@@ -659,7 +663,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     function one(i) {
       active++;
       var im = new Image(); im.decoding = 'async';
-      im.onload = function () { ready[i] = true; active--; if (drawn < 0 || Math.abs(i - current) <= 2) draw(true); pump(); };
+      im.onload = function () { ready[i] = true; active--; if (inKeep(i)) decode(i); if (drawn < 0 || Math.abs(i - current) <= 2) draw(true); pump(); };
       im.onerror = function () { active--; pump(); };
       im.src = 'frames/v2/f' + pad(i) + '.webp'; imgs[i] = im;
     }
@@ -677,6 +681,30 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     io.observe(track);
   } else { near = true; maybeStart(); }
 
+  /* Decoded frames. iPhone Safari throws decoded images away to save memory and decodes them
+     again on every draw, which made the stage stutter. Keep decoded copies only for the frames
+     near the current one (and along a NEXT jump) and release the others: each is ~4 MB. */
+  function inKeep(i) { return (i >= keepLo && i <= keepHi) || (i >= pathLo && i <= pathHi); }
+  function decode(i) {
+    if (!canBmp || !ready[i] || bmp[i] || bmpBusy[i]) return;
+    bmpBusy[i] = true;
+    createImageBitmap(imgs[i]).then(function (b) {
+      bmpBusy[i] = false;
+      if (!inKeep(i)) { if (b.close) b.close(); return; }
+      bmp[i] = b;
+    }, function () { bmpBusy[i] = false; canBmp = false; });
+  }
+  function keep(lo, hi) {
+    keepLo = Math.max(0, lo); keepHi = Math.min(N - 1, hi);
+    for (var i = 0; i < N; i++) {
+      if (inKeep(i)) decode(i);
+      else if (bmp[i]) { if (bmp[i].close) bmp[i].close(); bmp[i] = null; }
+    }
+  }
+  function pathReady() {
+    for (var i = Math.max(0, pathLo); i <= Math.min(N - 1, pathHi); i++) if (ready[i] && !bmp[i] && canBmp) return false;
+    return true;
+  }
   function nearest(i) {
     for (var d = 0; d < N; d++) {
       if (i - d >= 0 && ready[i - d]) return i - d;
@@ -694,12 +722,12 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     if (k < 0) return;
     if (!force && k === drawn) return;
     sload.hidden = true;
-    var im = imgs[k], W = cv.width, H = cv.height;
+    var im = bmp[k] || imgs[k], iw = im.naturalWidth || im.width, ih = im.naturalHeight || im.height, W = cv.width, H = cv.height;
     ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, W, H);
     var tall = H / W > 1.3;
-    var s = Math.min(W / im.naturalWidth, H / im.naturalHeight);
-    if (tall) s = Math.max(s, Math.min(W / im.naturalWidth * 1.08, H / im.naturalHeight));
-    var w = im.naturalWidth * s, h = im.naturalHeight * s;
+    var s = Math.min(W / iw, H / ih);
+    if (tall) s = Math.max(s, Math.min(W / iw * 1.08, H / ih));
+    var w = iw * s, h = ih * s;
     ctx.drawImage(im, (W - w) / 2, (H - h) * (tall ? 0.2 : 0.5), w, h);  /* phones: sit higher, leaving room for the caption and the next cue */
     drawn = k;
   }
@@ -707,15 +735,15 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     var r = track.getBoundingClientRect(), span = track.offsetHeight - window.innerHeight;
     var p = Math.min(Math.max(-r.top / Math.max(span, 1), 0), 1);
     var f = Math.round(p * (N - 1));
-    bar.style.width = (p * 100).toFixed(2) + '%';
+    bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
     var inView = r.top < window.innerHeight && r.bottom > 0;
     if (inView && drawn < 0) { sload.hidden = false; if (!started) { near = true; pageLoaded = true; start(); } }
-    if (f !== current) { current = f; draw(false); }
+    if (f !== current || keepHi < 0) { current = f; draw(false); keep(f - 5, f + 9); }
     var idx = -1;
     caps.forEach(function (c, i) {
       var on = f >= +c.getAttribute('data-from') && f <= +c.getAttribute('data-to');
       c.classList.toggle('on', on);
-      if (on) { idx = i; stepEl.textContent = c.getAttribute('data-step') + ' / 07'; }
+      if (on) { idx = i; var st = c.getAttribute('data-step') + ' / 07'; if (stepEl.textContent !== st) stepEl.textContent = st; }
     });
     var nx = idx >= 0 ? caps[idx + 1] || null : null;
     if (nx !== cueFor) {
@@ -746,7 +774,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     return window.scrollY + track.getBoundingClientRect().top + fr / (N - 1) * span;
   }
   function cueCancel() {
-    if (cueAnim) { cancelAnimationFrame(cueAnim); cueAnim = 0; document.documentElement.style.scrollBehavior = ''; }
+    if (cueAnim) { cancelAnimationFrame(cueAnim); cueAnim = 0; document.documentElement.style.scrollBehavior = ''; pathLo = 0; pathHi = -1; }
   }
   function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
   cue.addEventListener('click', function () {
@@ -758,6 +786,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     var span = track.offsetHeight - window.innerHeight;
     var from = Math.min(Math.max(-track.getBoundingClientRect().top / Math.max(span, 1), 0), 1) * (N - 1);
     if (reduce) { window.scrollTo(0, Math.round(frameTop(to))); return; }
+    pathLo = Math.floor(Math.min(from, to)) - 1; pathHi = Math.ceil(Math.max(from, to)) + 1;
+    keep(keepLo, keepHi);
     var dur = Math.min(Math.max(450 + Math.abs(to - from) * 40, 700), 1500), t0 = 0;
     document.documentElement.style.scrollBehavior = 'auto';
     function step(now) {
@@ -765,9 +795,15 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
       var t = Math.min((now - t0) / dur, 1);
       window.scrollTo(0, Math.round(frameTop(from + (to - from) * ease(t))));
       if (t < 1) cueAnim = requestAnimationFrame(step);
-      else { cueAnim = 0; document.documentElement.style.scrollBehavior = ''; }
+      else { cueAnim = 0; document.documentElement.style.scrollBehavior = ''; pathLo = 0; pathHi = -1; keep(current - 5, current + 9); }
     }
-    cueAnim = requestAnimationFrame(step);
+    var w0 = 0;
+    function wait(now) {
+      if (!w0) w0 = now;
+      if (pathReady() || now - w0 > 450) cueAnim = requestAnimationFrame(step);
+      else cueAnim = requestAnimationFrame(wait);
+    }
+    cueAnim = requestAnimationFrame(wait);
   });
   /* a finger or wheel during the jump means the visitor took over */
   window.addEventListener('touchstart', cueCancel, { passive: true });
