@@ -736,13 +736,33 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     var h = c.querySelector('h2.l-' + l) || c.querySelector('h2');
     return h ? h.textContent.replace(/\s+/g, ' ').trim() : '';
   }
+  /* Jump a third of the way into the next caption, not onto its first frame: on phones the
+     visible height changes while scrolling (the address bar collapses), which moves the frame
+     mapping by a frame or two and could leave you on the previous caption. After the scroll
+     settles, check where we landed and correct once if it still missed. */
+  var cueFix = 0, cueTarget = null;
+  function cueGo(c, smooth) {
+    var a = +c.getAttribute('data-from'), z = +c.getAttribute('data-to');
+    var span = track.offsetHeight - window.innerHeight;
+    var top = window.scrollY + track.getBoundingClientRect().top + (a + (z - a) * 0.35) / (N - 1) * span;
+    window.scrollTo({ top: Math.round(top), behavior: smooth ? 'smooth' : 'auto' });
+  }
+  function cueCancel() { clearTimeout(cueFix); cueTarget = null; }
   cue.addEventListener('click', function () {
     if (!cueFor) return;
-    var span = track.offsetHeight - window.innerHeight;
-    var top = window.scrollY + track.getBoundingClientRect().top + (+cueFor.getAttribute('data-from') + 0.6) / (N - 1) * span;
-    if (window.edexTrack) window.edexTrack('scroll/v2-cue/' + cueFor.getAttribute('data-step'));
-    window.scrollTo({ top: Math.ceil(top), behavior: reduce ? 'auto' : 'smooth' });
+    var c = cueFor;
+    if (window.edexTrack) window.edexTrack('scroll/v2-cue/' + c.getAttribute('data-step'));
+    cueCancel(); cueTarget = c;
+    cueGo(c, !reduce);
+    cueFix = setTimeout(function () {
+      if (cueTarget !== c) return;
+      cueTarget = null;
+      if (current < +c.getAttribute('data-from') || current > +c.getAttribute('data-to')) cueGo(c, false);
+    }, reduce ? 150 : 1300);
   });
+  /* a finger or wheel during the jump means the visitor took over: no correction */
+  window.addEventListener('touchstart', cueCancel, { passive: true });
+  window.addEventListener('wheel', cueCancel, { passive: true });
   skip.addEventListener('click', function (e) {
     var t = document.getElementById('log');
     if (!t) return;
