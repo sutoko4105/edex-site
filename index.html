@@ -333,7 +333,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
         <p class="l-en" lang="en">That seamless joint and this scoop, together: a shape you won’t see on other kendama made for real play today.</p>
       </div>
     </section>
-    <section class="cap" data-from="59" data-to="85" data-step="04">
+    <section class="cap" data-from="59" data-to="85" data-step="04" data-stop="83">
       <div class="inner">
         <p class="eyebrow">TPU cups</p>
         <h2 class="h-ja l-ja" lang="ja">皿は、TPU。</h2>
@@ -342,7 +342,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
         <p class="l-en" lang="en">All-PLA cups are too hard, and tricks get tougher. TPU softens the contact and works as a damper that protects the ken.</p>
       </div>
     </section>
-    <section class="cap" data-from="86" data-to="111" data-step="05">
+    <section class="cap" data-from="86" data-to="111" data-step="05" data-stop="107">
       <div class="inner">
         <p class="eyebrow">Luna hole</p>
         <h2 class="h-ja l-ja" lang="ja">中皿の奥に、<br>ルナホール。</h2>
@@ -351,7 +351,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
         <p class="l-en" lang="en">Take off the base cup and there’s a deep cavity.</p>
       </div>
     </section>
-    <section class="cap" data-from="112" data-to="127" data-step="05">
+    <section class="cap" data-from="112" data-to="127" data-step="05" data-stop="123">
       <div class="inner">
         <p class="eyebrow">Luna hole</p>
         <h2 class="h-ja l-ja" lang="ja">ふさいで、<br>完成する。</h2>
@@ -362,7 +362,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
         <p class="touch l-en" lang="en">The rest, you’ll have to feel for yourself.</p>
       </div>
     </section>
-    <section class="cap" data-from="128" data-to="149" data-step="06">
+    <section class="cap" data-from="128" data-to="149" data-step="06" data-stop="147">
       <div class="inner">
         <p class="eyebrow">Quick tune</p>
         <h2 class="h-ja l-ja" lang="ja">2つのストリングホール。</h2>
@@ -792,7 +792,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   cue.addEventListener('click', function () {
     if (!cueFor) return;
     var c = cueFor, a = +c.getAttribute('data-from'), z = +c.getAttribute('data-to');
-    var to = a + (z - a) * 0.35;
+    /* data-stop = the frame that shows that caption best (from the render settings); otherwise a third in */
+    var to = c.hasAttribute('data-stop') ? +c.getAttribute('data-stop') : a + (z - a) * 0.35;
     if (window.edexTrack) window.edexTrack('scroll/v2-cue/' + c.getAttribute('data-step'));
     cueCancel();
     var span = track.offsetHeight - window.innerHeight;
@@ -800,7 +801,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     if (reduce) { window.scrollTo(0, Math.round(frameTop(to))); return; }
     pathLo = Math.floor(Math.min(from, to)) - 1; pathHi = Math.ceil(Math.max(from, to)) + 1;
     keep(keepLo, keepHi);
-    var dur = Math.min(Math.max(450 + Math.abs(to - from) * 40, 700), 1500), t0 = 0;
+    var dur = Math.min(Math.max(450 + Math.abs(to - from) * 40, 700), 1900), t0 = 0;
     function step(now) {
       if (!t0) { t0 = now; playing = true; }
       var t = Math.min((now - t0) / dur, 1);
