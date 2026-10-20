@@ -98,7 +98,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .track { position: relative; height: 1300vh; border-top: 1px solid #222220; }
 .stage { position: sticky; top: env(safe-area-inset-top, 0px); height: calc(100vh - env(safe-area-inset-top, 0px)); height: calc(100svh - env(safe-area-inset-top, 0px)); overflow: hidden; background: var(--ground); }
 .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.6) 45%, rgba(10,10,10,0) 100%); pointer-events: none; }
+.stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 54%; background: linear-gradient(to top, rgba(10,10,10,0.94) 0%, rgba(10,10,10,0.78) 40%, rgba(10,10,10,0.35) 72%, rgba(10,10,10,0) 100%); pointer-events: none; }
 .progress { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--line); z-index: 3; }
 .progress span { display: block; height: 100%; width: 0; background: var(--fg); }
 .sbar { position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
@@ -109,7 +109,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .step { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--muted); font-variant-numeric: tabular-nums; }
 .skip { display: inline-flex; align-items: center; min-height: 36px; padding: 0 10px; border: 1px solid var(--line-2); border-radius: 2px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--muted); text-decoration: none; background: rgba(10,10,10,0.5); transition: opacity 0.3s; }
 .skip:hover { color: var(--fg); border-color: var(--muted); }
-.cap { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 32px); opacity: 0; transform: translateY(14px); transition: opacity 0.45s ease, transform 0.45s ease; pointer-events: none; }
+.cap { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 74px); opacity: 0; transform: translateY(14px); transition: opacity 0.45s ease, transform 0.45s ease; pointer-events: none; }
 .cap.on { opacity: 1; transform: none; pointer-events: auto; }
 .cap .inner { max-width: 560px; display: flex; flex-direction: column; gap: 10px; }
 .cap h2 { margin: 0; }
@@ -121,7 +121,29 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .cap .buy { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 4px; }
 .cap .buy .btn { padding: 0 12px; }
 .cap .buy .btn.line { grid-column: 1 / -1; }
-.hint { position: absolute; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); transform: translateX(-50%); z-index: 2; margin: 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--muted); transition: opacity 0.3s; }
+/* next cue: tells you scrolling brings the next explanation; tap to jump to it */
+.cue { position: absolute; left: max(20px, env(safe-area-inset-left, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 3; display: flex; align-items: center; gap: 10px; width: fit-content; max-width: calc(100% - 2 * max(20px, env(safe-area-inset-left, 0px))); min-height: 44px; margin: 0; padding: 0 12px 0 0; border: 0; background: none; color: var(--soft); font-family: var(--body); font-size: 13px; line-height: 1.3; text-align: left; cursor: pointer; transition: opacity 0.35s; -webkit-tap-highlight-color: transparent; }
+.cue.off { opacity: 0; pointer-events: none; }
+.cue-arrow { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border: 1px solid rgba(242,242,240,0.45); border-radius: 50%; font-family: var(--mono); font-size: 14px; color: var(--fg); animation: cue-bob 1.6s ease-in-out infinite; }
+@keyframes cue-bob { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
+.cue-label { flex: none; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--muted); white-space: nowrap; }
+.cue-title { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.cue:hover .cue-title, .cue:focus-visible .cue-title { color: var(--fg); }
+.cue:hover .cue-arrow { border-color: var(--fg); }
+.cue:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) { .cue-arrow { animation: none; } }
+/* short phones (iPhone SE and smaller): tighter captions so they clash less with the model; a soft shadow keeps text readable where they still overlap */
+.cap h2, .cap p, .cap .eyebrow { text-shadow: 0 0 14px rgba(10,10,10,0.85), 0 1px 2px rgba(10,10,10,0.9); }
+@media (max-height: 700px) and (max-width: 600px) {
+  .cap { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 64px); }
+  .cap .inner { gap: 7px; }
+  .cap h2.h-en { font-size: 30px; }
+  .cap h2.h-ja { font-size: 24px; }
+  .cap p { font-size: 14px; line-height: 1.6; }
+  .cap .touch { margin-top: 2px; padding-top: 8px; font-size: 15px; }
+  .cue { bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); }
+  .cue-title { -webkit-line-clamp: 1; }
+}
 .sload { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; color: var(--muted); z-index: 1; }
 
 /* bands */
@@ -284,6 +306,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
         <p class="eyebrow">PLAKEN HOLLOW Frame V2</p>
         <h2 class="h-ja l-ja" lang="ja">分解して、見てみる。</h2>
         <h2 class="h-en l-en" lang="en">Let’s take it apart.</h2>
+        <p class="l-ja" lang="ja">スクロールで、ひとつずつ分解していきます。</p>
+        <p class="l-en" lang="en">Scroll, and it comes apart one piece at a time.</p>
       </div>
     </section>
     <section class="cap" data-from="16" data-to="37" data-step="02">
@@ -344,7 +368,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
         <p class="l-en" lang="en">One runs straight through, one at an angle. Adjusting string length is easy.</p>
       </div>
     </section>
-    <section class="cap" data-from="150" data-to="161" data-step="07">
+    <section class="cap" data-from="150" data-to="161" data-step="07" data-next-ja="V2を手に入れる" data-next-en="Get the V2">
       <div class="inner">
         <p class="eyebrow">Get PLAKEN</p>
         <h2 class="h-en">HOLLOW Frame V2</h2>
@@ -360,7 +384,11 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
         </div>
       </div>
     </section>
-    <p class="hint" id="hint" aria-hidden="true">SCROLL ↓</p>
+    <button class="cue off" id="cue" type="button">
+      <span class="cue-arrow" aria-hidden="true">↓</span>
+      <span class="cue-label">NEXT <span id="cue-num">02</span></span>
+      <span class="cue-title"><span class="l-ja" lang="ja" id="cue-ja"></span><span class="l-en" lang="en" id="cue-en"></span></span>
+    </button>
   </div>
 </div>
 
@@ -620,7 +648,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   var track = document.getElementById('structure'), stage = document.getElementById('stage');
   var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
   var bar = document.getElementById('sbar'), stepEl = document.getElementById('step');
-  var hint = document.getElementById('hint'), skip = document.getElementById('skip'), sload = document.getElementById('sload');
+  var cue = document.getElementById('cue'), cueNum = document.getElementById('cue-num'), cueJa = document.getElementById('cue-ja'), cueEn = document.getElementById('cue-en'), cueFor = null, skip = document.getElementById('skip'), sload = document.getElementById('sload');
   var caps = Array.prototype.slice.call(document.querySelectorAll('.cap'));
   var imgs = new Array(N), ready = new Array(N), current = 0, drawn = -1, started = false, near = false;
 
@@ -672,7 +700,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     var s = Math.min(W / im.naturalWidth, H / im.naturalHeight);
     if (tall) s = Math.max(s, Math.min(W / im.naturalWidth * 1.08, H / im.naturalHeight));
     var w = im.naturalWidth * s, h = im.naturalHeight * s;
-    ctx.drawImage(im, (W - w) / 2, (H - h) * (tall ? 0.32 : 0.5), w, h);
+    ctx.drawImage(im, (W - w) / 2, (H - h) * (tall ? 0.2 : 0.5), w, h);  /* phones: sit higher, leaving room for the caption and the next cue */
     drawn = k;
   }
   function update() {
@@ -680,21 +708,41 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     var p = Math.min(Math.max(-r.top / Math.max(span, 1), 0), 1);
     var f = Math.round(p * (N - 1));
     bar.style.width = (p * 100).toFixed(2) + '%';
-    hint.style.opacity = f < 3 ? 1 : 0;
     var inView = r.top < window.innerHeight && r.bottom > 0;
     if (inView && drawn < 0) { sload.hidden = false; if (!started) { near = true; pageLoaded = true; start(); } }
     if (f !== current) { current = f; draw(false); }
-    caps.forEach(function (c) {
+    var idx = -1;
+    caps.forEach(function (c, i) {
       var on = f >= +c.getAttribute('data-from') && f <= +c.getAttribute('data-to');
       c.classList.toggle('on', on);
-      if (on) stepEl.textContent = c.getAttribute('data-step') + ' / 07';
+      if (on) { idx = i; stepEl.textContent = c.getAttribute('data-step') + ' / 07'; }
     });
+    var nx = idx >= 0 ? caps[idx + 1] || null : null;
+    if (nx !== cueFor) {
+      cueFor = nx;
+      if (nx) { cueNum.textContent = nx.getAttribute('data-step'); cueJa.textContent = capTitle(nx, 'ja'); cueEn.textContent = capTitle(nx, 'en'); }
+    }
+    cue.classList.toggle('off', !nx);
+    if (f >= 16 && !window.__edexS2) { window.__edexS2 = 1; if (window.edexTrack) window.edexTrack('scroll/v2-02'); }
     var last = f >= 150;
     if (last && !window.__edexEnd) { window.__edexEnd = 1; if (window.edexTrack) window.edexTrack('scroll/v2-end'); }
     skip.style.opacity = last ? 0 : 1;
     skip.style.pointerEvents = last ? 'none' : 'auto';
     skip.tabIndex = last ? -1 : 0;
   }
+  function capTitle(c, l) {
+    var o = c.getAttribute('data-next-' + l);
+    if (o) return o;
+    var h = c.querySelector('h2.l-' + l) || c.querySelector('h2');
+    return h ? h.textContent.replace(/\s+/g, ' ').trim() : '';
+  }
+  cue.addEventListener('click', function () {
+    if (!cueFor) return;
+    var span = track.offsetHeight - window.innerHeight;
+    var top = window.scrollY + track.getBoundingClientRect().top + (+cueFor.getAttribute('data-from') + 0.6) / (N - 1) * span;
+    if (window.edexTrack) window.edexTrack('scroll/v2-cue/' + cueFor.getAttribute('data-step'));
+    window.scrollTo({ top: Math.ceil(top), behavior: reduce ? 'auto' : 'smooth' });
+  });
   skip.addEventListener('click', function (e) {
     var t = document.getElementById('log');
     if (!t) return;
