@@ -736,31 +736,40 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     var h = c.querySelector('h2.l-' + l) || c.querySelector('h2');
     return h ? h.textContent.replace(/\s+/g, ' ').trim() : '';
   }
-  /* Jump a third of the way into the next caption, not onto its first frame: on phones the
-     visible height changes while scrolling (the address bar collapses), which moves the frame
-     mapping by a frame or two and could leave you on the previous caption. After the scroll
-     settles, check where we landed and correct once if it still missed. */
-  var cueFix = 0, cueTarget = null;
-  function cueGo(c, smooth) {
-    var a = +c.getAttribute('data-from'), z = +c.getAttribute('data-to');
+  /* NEXT: play the frames through to a third of the way into the next caption, at our own
+     pace. Safari's built-in smooth scroll is very fast and skipped frames, so the model
+     seemed to jerk. Each animation step recomputes the position from the frame number, so a
+     change in visible height (address bar) cannot leave the jump on the previous caption. */
+  var cueAnim = 0;
+  function frameTop(fr) {
     var span = track.offsetHeight - window.innerHeight;
-    var top = window.scrollY + track.getBoundingClientRect().top + (a + (z - a) * 0.35) / (N - 1) * span;
-    window.scrollTo({ top: Math.round(top), behavior: smooth ? 'smooth' : 'auto' });
+    return window.scrollY + track.getBoundingClientRect().top + fr / (N - 1) * span;
   }
-  function cueCancel() { clearTimeout(cueFix); cueTarget = null; }
+  function cueCancel() {
+    if (cueAnim) { cancelAnimationFrame(cueAnim); cueAnim = 0; document.documentElement.style.scrollBehavior = ''; }
+  }
+  function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
   cue.addEventListener('click', function () {
     if (!cueFor) return;
-    var c = cueFor;
+    var c = cueFor, a = +c.getAttribute('data-from'), z = +c.getAttribute('data-to');
+    var to = a + (z - a) * 0.35;
     if (window.edexTrack) window.edexTrack('scroll/v2-cue/' + c.getAttribute('data-step'));
-    cueCancel(); cueTarget = c;
-    cueGo(c, !reduce);
-    cueFix = setTimeout(function () {
-      if (cueTarget !== c) return;
-      cueTarget = null;
-      if (current < +c.getAttribute('data-from') || current > +c.getAttribute('data-to')) cueGo(c, false);
-    }, reduce ? 150 : 1300);
+    cueCancel();
+    var span = track.offsetHeight - window.innerHeight;
+    var from = Math.min(Math.max(-track.getBoundingClientRect().top / Math.max(span, 1), 0), 1) * (N - 1);
+    if (reduce) { window.scrollTo(0, Math.round(frameTop(to))); return; }
+    var dur = Math.min(Math.max(450 + Math.abs(to - from) * 40, 700), 1500), t0 = 0;
+    document.documentElement.style.scrollBehavior = 'auto';
+    function step(now) {
+      if (!t0) t0 = now;
+      var t = Math.min((now - t0) / dur, 1);
+      window.scrollTo(0, Math.round(frameTop(from + (to - from) * ease(t))));
+      if (t < 1) cueAnim = requestAnimationFrame(step);
+      else { cueAnim = 0; document.documentElement.style.scrollBehavior = ''; }
+    }
+    cueAnim = requestAnimationFrame(step);
   });
-  /* a finger or wheel during the jump means the visitor took over: no correction */
+  /* a finger or wheel during the jump means the visitor took over */
   window.addEventListener('touchstart', cueCancel, { passive: true });
   window.addEventListener('wheel', cueCancel, { passive: true });
   skip.addEventListener('click', function (e) {
