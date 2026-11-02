@@ -102,7 +102,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .progress { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--line); z-index: 3; }
 .progress span { display: block; height: 100%; width: 100%; background: var(--fg); transform: scaleX(0); transform-origin: 0 50%; will-change: transform; }
 .sbar { position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-.sbar .brand { display: flex; align-items: center; gap: 10px; }
+.sbar .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; padding: 6px 10px 6px 0; margin: -6px 0; border-radius: 2px; -webkit-tap-highlight-color: transparent; }  /* tap to go back to the top */
+.sbar .brand:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
 .sbar .brand .mark { height: 32px; width: auto; }
 .sbar .brand .word { height: 12px; width: auto; }
 .sbar .right { display: flex; align-items: center; gap: 14px; }
@@ -249,9 +250,9 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 </style>
 </head>
 <body>
-<header>
+<header id="top">
   <div class="wrap head">
-    <a class="logo" href="#top" id="top" aria-label="EDEX Kendama">
+    <a class="logo" href="#top" aria-label="EDEX Kendama">
       <img class="mark" src="img/edex-mark-white.png" alt="">
       <img class="word" src="img/edex-wordmark-white.png" alt="">
     </a>
@@ -297,7 +298,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     <div class="sload" id="sload" hidden><span class="l-ja">読み込み中…</span><span class="l-en">Loading…</span></div>
     <div class="progress" aria-hidden="true"><span id="sbar"></span></div>
     <div class="sbar">
-      <div class="brand" aria-hidden="true"><img class="mark" src="img/edex-mark-white.png" alt=""><img class="word" src="img/edex-wordmark-white.png" alt=""></div>
+      <a class="brand" href="#top" aria-label="EDEX Kendama"><img class="mark" src="img/edex-mark-white.png" alt=""><img class="word" src="img/edex-wordmark-white.png" alt=""></a>
       <div class="right">
         <span class="step" id="step" aria-hidden="true">01 / 07</span>
         <a class="skip" id="skip" href="#log"><span class="l-ja">スキップ ↓</span><span class="l-en">SKIP ↓</span></a>
