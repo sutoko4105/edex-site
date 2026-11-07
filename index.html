@@ -531,6 +531,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
         <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
+    <a class="rowlink" href="https://market.orilab.jp/user/6adec47fcc4c5"><span><span class="l-ja">アパレル（Tシャツ） <span class="note">· オリラボマーケット</span></span><span class="l-en">Apparel (T-shirts) <span class="note">· Orilab Market</span></span></span><span class="arrow" aria-hidden="true">→</span></a>
     <a class="rowlink" href="mailto:edexkendama@gmail.com"><span><span class="l-ja">販売店・代理店のご相談</span><span class="l-en">Shops and distributors: get in touch</span></span><span class="arrow" aria-hidden="true">→</span></a>
   </div>
 </section>
@@ -582,7 +583,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   document.head.appendChild(s);
   var kinds = [[/stores\.jp/, 'buy-stores'], [/fanken\.jp/, 'buy-fanken'], [/instagram\.com/, 'follow-instagram'],
                [/\/\/(www\.)?x\.com/, 'follow-x'], [/note\.com/, 'note'], [/^mailto:/, 'contact'],
-               [/tap-lab\.html/, 'open-taplab'], [/v1\.html/, 'open-v1']];
+               [/tap-lab\.html/, 'open-taplab'], [/v1\.html/, 'open-v1'], [/orilab\.jp/, 'buy-apparel']];
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a) return;

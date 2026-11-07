@@ -413,7 +413,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   document.head.appendChild(s);
   var kinds = [[/stores\.jp/, 'buy-stores'], [/fanken\.jp/, 'buy-fanken'], [/instagram\.com/, 'follow-instagram'],
                [/\/\/(www\.)?x\.com/, 'follow-x'], [/note\.com/, 'note'], [/^mailto:/, 'contact'],
-               [/tap-lab\.html/, 'open-taplab'], [/v1\.html/, 'open-v1']];
+               [/tap-lab\.html/, 'open-taplab'], [/v1\.html/, 'open-v1'], [/orilab\.jp/, 'buy-apparel']];
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a) return;
