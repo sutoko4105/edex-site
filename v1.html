@@ -89,9 +89,11 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .stage { position: sticky; top: env(safe-area-inset-top, 0px); height: calc(100vh - env(safe-area-inset-top, 0px)); height: calc(100svh - env(safe-area-inset-top, 0px)); overflow: hidden; background: var(--ground); }
 .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 54%; background: linear-gradient(to top, rgba(10,10,10,0.94) 0%, rgba(10,10,10,0.78) 40%, rgba(10,10,10,0.35) 72%, rgba(10,10,10,0) 100%); pointer-events: none; }
-.progress { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--line); z-index: 3; }
-.progress span { display: block; height: 100%; width: 100%; background: var(--fg); transform: scaleX(0); transform-origin: 0 50%; will-change: transform; }
-.sbar { position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+/* progress: one segment per step; the current one fills as you scroll */
+.segs { position: absolute; left: 0; right: 0; top: 0; z-index: 3; display: flex; gap: 3px; padding: 6px max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); }
+.segs i { flex: 1; height: 3px; border-radius: 2px; background: rgba(242,242,240,0.2); overflow: hidden; }
+.segs i b { display: block; height: 100%; background: var(--fg); transform: scaleX(0); transform-origin: 0 50%; will-change: transform; }
+.sbar { position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 18px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .sbar .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; padding: 6px 10px 6px 0; margin: -6px 0; border-radius: 2px; -webkit-tap-highlight-color: transparent; }  /* tap to go back to the top */
 .sbar .brand:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
 .sbar .brand .mark { height: 32px; width: auto; }
@@ -112,6 +114,19 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .cap .buy { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 4px; }
 .cap .buy .btn { padding: 0 12px; }
 .cap .buy .btn.line { grid-column: 1 / -1; }
+/* first caption: says what to do with your finger (phones) or the wheel (mouse) */
+.cap .hint { display: flex; align-items: center; gap: 12px; margin-top: 4px; font-weight: 500; }
+.hint .pill { flex: none; position: relative; width: 22px; height: 36px; border: 1.5px solid rgba(242,242,240,0.75); border-radius: 11px; }
+.hint .pill::after { content: ""; position: absolute; left: 50%; top: 6px; width: 4px; height: 8px; margin-left: -2px; border-radius: 2px; background: var(--fg); animation: hint-up 1.5s ease-in-out infinite; }
+@keyframes hint-up { 0% { transform: translateY(16px); opacity: 0; } 25%, 70% { opacity: 1; } 100% { transform: translateY(0); opacity: 0; } }
+@keyframes hint-down { 0% { transform: translateY(0); opacity: 0; } 25%, 70% { opacity: 1; } 100% { transform: translateY(16px); opacity: 0; } }
+.hint .t-mouse { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .hint .pill::after { animation-name: hint-down; }
+  .hint .t-touch { display: none; }
+  .hint .t-mouse { display: inline; }
+}
+@media (prefers-reduced-motion: reduce) { .hint .pill::after { animation: none; transform: translateY(8px); } }
 /* next cue: tells you scrolling brings the next explanation; tap to jump to it */
 .cue { position: absolute; left: max(20px, env(safe-area-inset-left, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 3; display: flex; align-items: center; gap: 10px; width: fit-content; max-width: calc(100% - 2 * max(20px, env(safe-area-inset-left, 0px))); min-height: 44px; margin: 0; padding: 0 12px 0 0; border: 0; background: none; color: var(--soft); font-family: var(--body); font-size: 13px; line-height: 1.3; text-align: left; cursor: pointer; transition: opacity 0.35s; -webkit-tap-highlight-color: transparent; }
 .cue.off { opacity: 0; pointer-events: none; }
@@ -270,7 +285,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   <div class="stage" id="stage">
     <canvas id="cv" role="img" data-label-ja="PLAKEN HOLLOW Frame V1の3D映像。スクロールで分解し、皿・ルナホール・ストリングホールを見せる" data-label-en="3D view of PLAKEN HOLLOW Frame V1. Scrolling takes it apart and shows the cups, luna hole and string holes"></canvas>
     <div class="sload" id="sload" hidden><span class="l-ja">読み込み中…</span><span class="l-en">Loading…</span></div>
-    <div class="progress" aria-hidden="true"><span id="sbar"></span></div>
+    <div class="segs" id="segs" aria-hidden="true"></div>
     <div class="sbar">
       <a class="brand" href="./" aria-label="EDEX Kendama"><img class="mark" src="img/edex-mark-white.png" alt=""><img class="word" src="img/edex-wordmark-white.png" alt=""></a>
       <div class="right">
@@ -284,8 +299,12 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
         <p class="eyebrow">PLAKEN HOLLOW Frame V1</p>
         <h2 class="h-ja l-ja" lang="ja">最初のPLAKEN。</h2>
         <h2 class="h-en l-en" lang="en">The first PLAKEN.</h2>
-        <p class="l-ja" lang="ja">スクロールで、ひとつずつ分解していきます。</p>
-        <p class="l-en" lang="en">Scroll, and it comes apart one piece at a time.</p>
+        <p class="hint"><span class="pill" aria-hidden="true"></span><span>
+          <span class="l-ja t-touch" lang="ja">上にスワイプで、ひとつずつ分解します。</span>
+          <span class="l-ja t-mouse" lang="ja">スクロールで、ひとつずつ分解します。</span>
+          <span class="l-en t-touch" lang="en">Swipe up to take it apart.</span>
+          <span class="l-en t-mouse" lang="en">Scroll to take it apart.</span>
+        </span></p>
       </div>
     </section>
     <section class="cap" data-from="16" data-to="37" data-step="02">
@@ -450,13 +469,37 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 
   /* ---------- scroll stage (frames/v1/) ---------- */
   var N = 162, DIR = 'frames/v1/', STEPS = '07', LAST = 150;
-  var track = document.getElementById('structure');
+  var track = document.getElementById('structure'), stage = document.getElementById('stage');
   var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
-  var bar = document.getElementById('sbar'), stepEl = document.getElementById('step');
+  var segsEl = document.getElementById('segs'), stepEl = document.getElementById('step');
   var cue = document.getElementById('cue'), cueNum = document.getElementById('cue-num'), cueJa = document.getElementById('cue-ja'), cueEn = document.getElementById('cue-en'), cueFor = null, skip = document.getElementById('skip'), sload = document.getElementById('sload');
   var caps = Array.prototype.slice.call(document.querySelectorAll('.cap'));
   var imgs = new Array(N), ready = new Array(N), current = 0, drawn = -1, started = false;
   var bmp = new Array(N), bmpBusy = new Array(N), keepLo = 0, keepHi = -1, pathLo = 0, pathHi = -1, canBmp = typeof createImageBitmap === 'function';
+
+  /* The first LEAD frames play while the stage is still scrolling into view, so the model
+     already answers the finger before the stage pins. The rest play while it is pinned. */
+  var LEAD = 10, pinTop = 0;
+  function geo() {
+    return { top: track.getBoundingClientRect().top - pinTop,            /* 0 = the moment the stage pins */
+             span: Math.max(track.offsetHeight - stage.offsetHeight, 1),  /* scroll distance while pinned */
+             rise: Math.max(window.innerHeight - pinTop, 1) };            /* first sight -> pinned */
+  }
+  function clamp01(v) { return Math.min(Math.max(v, 0), 1); }
+  function scrollFrame() {  /* scroll position -> frame (fractional) */
+    var g = geo();
+    if (g.top > 0) return LEAD * clamp01(1 - g.top / g.rise);
+    return LEAD + clamp01(-g.top / g.span) * (N - 1 - LEAD);
+  }
+  /* progress segments, one per step (two captions share step 05) */
+  var segs = [];
+  caps.forEach(function (c) {
+    var s = c.getAttribute('data-step');
+    if (segs.length && segs[segs.length - 1].s === s) return;
+    var i = document.createElement('i'), b = document.createElement('b');
+    i.appendChild(b); segsEl.appendChild(i);
+    segs.push({ s: s, a: +c.getAttribute('data-from'), el: b });
+  });
 
   function pad(i) { return ('00' + i).slice(-3); }
   function start() {
@@ -509,6 +552,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   function size() {
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     cv.width = Math.max(1, Math.round(cv.clientWidth * dpr)); cv.height = Math.max(1, Math.round(cv.clientHeight * dpr));
+    pinTop = parseFloat(getComputedStyle(stage).top) || 0;
     draw(true);
   }
   function draw(force) {
@@ -526,16 +570,19 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     drawn = k;
   }
   function update() {
-    var r = track.getBoundingClientRect(), span = track.offsetHeight - window.innerHeight;
+    var r = track.getBoundingClientRect();
     var inView = r.top < window.innerHeight && r.bottom > 0;
     if (inView && drawn < 0) { sload.hidden = false; start(); }
     if (playing) return;  /* a NEXT jump is drawing the frames itself */
-    show(Math.min(Math.max(-r.top / Math.max(span, 1), 0), 1) * (N - 1));
+    show(scrollFrame());
   }
   function show(fp) {
     shown = fp;
-    var p = fp / (N - 1), f = Math.round(fp);
-    bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    var f = Math.round(fp);
+    for (var si = 0; si < segs.length; si++) {
+      var sa = segs[si].a, sz = si + 1 < segs.length ? segs[si + 1].a : N - 1;
+      segs[si].el.style.transform = 'scaleX(' + clamp01((fp - sa) / (sz - sa)).toFixed(4) + ')';
+    }
     if (f !== current || keepHi < 0) { current = f; draw(false); keep(f - 5, f + 9); }
     var idx = -1;
     caps.forEach(function (c, i) {
@@ -567,9 +614,10 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
      seemed to jerk. Each animation step recomputes the position from the frame number, so a
      change in visible height (address bar) cannot leave the jump on the previous caption. */
   var cueAnim = 0, playing = false, shown = 0;
-  function frameTop(fr) {
-    var span = track.offsetHeight - window.innerHeight;
-    return window.scrollY + track.getBoundingClientRect().top + fr / (N - 1) * span;
+  function frameTop(fr) {  /* frame -> scroll position (the inverse of scrollFrame) */
+    var g = geo(), pin = window.scrollY + g.top;
+    if (fr < LEAD) return pin - (1 - fr / LEAD) * g.rise;
+    return pin + (fr - LEAD) / (N - 1 - LEAD) * g.span;
   }
   function settle(fr) {  /* put the real scroll position where the drawn frame is */
     document.documentElement.style.scrollBehavior = 'auto';
@@ -590,8 +638,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     var to = c.hasAttribute('data-stop') ? +c.getAttribute('data-stop') : a + (z - a) * 0.35;
     if (window.edexTrack) window.edexTrack('scroll/v1-cue/' + c.getAttribute('data-step'));
     cueCancel();
-    var span = track.offsetHeight - window.innerHeight;
-    var from = Math.min(Math.max(-track.getBoundingClientRect().top / Math.max(span, 1), 0), 1) * (N - 1);
+    var from = scrollFrame();
     if (reduce) { window.scrollTo(0, Math.round(frameTop(to))); return; }
     pathLo = Math.floor(Math.min(from, to)) - 1; pathHi = Math.ceil(Math.max(from, to)) + 1;
     keep(keepLo, keepHi);
