@@ -73,6 +73,10 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .head-r { display: flex; align-items: center; gap: 10px; }
 .taplink { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border: 1px solid #333331; border-radius: 3px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; color: var(--fg); text-decoration: none; white-space: nowrap; }
 .taplink:hover { border-color: var(--muted); }
+#spec { scroll-margin-top: 16px; }
+/* phones: the header now carries Specs + Tap Lab + JP/EN, so the wordmark steps aside and the mark alone links home */
+@media (max-width: 479px) { .logo .word { display: none; } .head { gap: 10px; } .head-r { gap: 6px; } .taplink { padding: 0 9px; } }
+@media (max-width: 339px) { .logo { flex: none; } .head-r { gap: 4px; } .taplink { padding: 0 6px; font-size: 12px; } .langs button { min-width: 40px; } }
 .langs { display: flex; gap: 2px; padding: 2px; border: 1px solid #333331; border-radius: 3px; }
 .langs button { font-family: var(--mono); font-size: 13px; min-width: 44px; min-height: 40px; border: 0; border-radius: 2px; background: transparent; color: var(--muted); cursor: pointer; }
 .langs button[aria-pressed="true"] { background: var(--fg); color: var(--ground); font-weight: 500; }
@@ -272,6 +276,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
       <img class="word" src="img/edex-wordmark-white.png" alt="">
     </a>
     <div class="head-r">
+      <a class="taplink" href="#spec"><span class="l-ja">スペック</span><span class="l-en">Specs</span></a>
       <a class="taplink" href="tap-lab.html" data-taplab>Tap Lab</a>
       <div class="langs" role="group" aria-label="Language / 言語">
         <button type="button" data-set-lang="ja" lang="ja" aria-pressed="false">JP</button>
@@ -446,7 +451,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
             <li>Smoother sarado that flows into the shaft, for gunslinger</li>
             <li>Weight placement tuned 10+ times around flip, gunslinger and moon</li>
           </ul>
-          <dl class="specs">
+          <dl class="specs" id="spec">
             <div><dt class="l-ja">大皿</dt><dt class="l-en">BIG CUP</dt><dd>51 mm</dd></div>
             <div><dt class="l-ja">小皿</dt><dt class="l-en">SMALL CUP</dt><dd>51 mm</dd></div>
             <div><dt class="l-ja">剣の長さ</dt><dt class="l-en">KEN LENGTH</dt><dd>165 mm</dd></div>
@@ -600,7 +605,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   s.async = true; s.src = 'https://gc.zgo.at/count.js';
   s.setAttribute('data-goatcounter', 'https://' + CODE + '.goatcounter.com/count');
   document.head.appendChild(s);
-  var kinds = [[/stores\.jp/, 'buy-stores'], [/fanken\.jp/, 'buy-fanken'], [/instagram\.com/, 'follow-instagram'],
+  var kinds = [[/stores\.jp/, 'buy-stores'], [/fanken\.jp/, 'buy-fanken'], [/instagram\.com/, 'follow-instagram'], [/^#spec$/, 'open-spec'],
                [/\/\/(www\.)?x\.com/, 'follow-x'], [/note\.com/, 'note'], [/^mailto:/, 'contact'],
                [/tap-lab\.html/, 'open-taplab'], [/v1\.html/, 'open-v1'], [/orilab\.jp/, 'buy-apparel']];
   document.addEventListener('click', function (e) {
