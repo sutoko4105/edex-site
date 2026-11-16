@@ -74,9 +74,10 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .taplink { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border: 1px solid #333331; border-radius: 3px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; color: var(--fg); text-decoration: none; white-space: nowrap; }
 .taplink:hover { border-color: var(--muted); }
 #spec { scroll-margin-top: 16px; }
-/* phones: the header now carries Specs + Tap Lab + JP/EN, so the wordmark steps aside and the mark alone links home */
-@media (max-width: 479px) { .logo .word { display: none; } .head { gap: 10px; } .head-r { gap: 6px; } .taplink { padding: 0 9px; } }
-@media (max-width: 339px) { .logo { flex: none; } .head-r { gap: 4px; } .taplink { padding: 0 6px; font-size: 12px; } .langs button { min-width: 40px; } }
+/* narrow phones: keep the full logo (mark + wordmark) and the buttons side by side without touching */
+.logo, .logo img { flex: none; }
+@media (max-width: 389px) { .logo { gap: 8px; } .logo .word { height: 11px; } .head { gap: 10px; } .head-r { gap: 6px; } .taplink { padding: 0 9px; } }
+@media (max-width: 339px) { .logo .word { height: 10px; } .head { gap: 6px; } .head-r { gap: 4px; } .taplink { padding: 0 6px; font-size: 12px; } .langs button { min-width: 40px; } }
 .langs { display: flex; gap: 2px; padding: 2px; border: 1px solid #333331; border-radius: 3px; }
 .langs button { font-family: var(--mono); font-size: 13px; min-width: 44px; min-height: 40px; border: 0; border-radius: 2px; background: transparent; color: var(--muted); cursor: pointer; }
 .langs button[aria-pressed="true"] { background: var(--fg); color: var(--ground); font-weight: 500; }
@@ -277,7 +278,6 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     </a>
     <div class="head-r">
       <a class="taplink" href="#spec"><span class="l-ja">スペック</span><span class="l-en">Specs</span></a>
-      <a class="taplink" href="tap-lab.html" data-taplab>Tap Lab</a>
       <div class="langs" role="group" aria-label="Language / 言語">
         <button type="button" data-set-lang="ja" lang="ja" aria-pressed="false">JP</button>
         <button type="button" data-set-lang="en" lang="en" aria-pressed="false">EN</button>
