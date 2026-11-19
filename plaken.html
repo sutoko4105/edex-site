@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PLAKEN Lineup · EDEX Kendama</title>
+<meta name="description" content="3Dプリントのけん玉 PLAKEN の3つのライン、AXIS・FOCUS・ELLIPSE。The three lines of PLAKEN, the 3D-printed kendama: AXIS, FOCUS and ELLIPSE.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EDEX Kendama">
+<meta property="og:title" content="PLAKEN AXIS · FOCUS · ELLIPSE">
+<meta property="og:description" content="Three lines, one frame. PLAKEN, the 3D-printed kendama.">
+<meta property="og:url" content="https://edexkendama.com/plaken.html">
+<meta property="og:image" content="https://edexkendama.com/img/plaken/og-plaken.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="canonical" href="https://edexkendama.com/plaken.html">
+<script>
+/* Language: fixed by URL hash (#en, #ja) > saved choice > device language (ja -> Japanese, everything else -> English) */
+(function () {
+  var lang = null, h = (location.hash || '').slice(1).toLowerCase();
+  if (h === 'en' || h === 'ja') lang = h;
+  if (!lang) { try { var s = localStorage.getItem('edex-lang'); if (s === 'en' || s === 'ja') lang = s; } catch (e) {} }
+  if (!lang) { var L = (navigator.languages && navigator.languages[0]) || navigator.language || ''; lang = /^ja\b/i.test(L) ? 'ja' : 'en'; }
+  document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.lang = lang;
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* Layout: the lineup page. Three real photos side by side, then one band per line (photo viewer + text),
+   a chooser, the shared structure, and where to buy. Same single dark look as the rest of the site. */
+:root {
+  --ground: #0a0a0a;
+  --surface: #0f0f0f;
+  --surface-2: #151515;
+  --line: #262624;
+  --line-2: #3a3a38;
+  --fg: #f2f2f0;
+  --soft: #cfcfcb;
+  --muted: #a3a3a0;
+  --dim: #6b6b68;
+  --display: "Archivo", "IBM Plex Sans JP", system-ui, sans-serif;
+  --body: "IBM Plex Sans JP", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--ground); }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--ground); }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: var(--fg); }
+html[data-lang="ja"] .l-en, html[data-lang="en"] .l-ja, html:not([data-lang]) .l-en { display: none !important; }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.eyebrow { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; color: var(--muted); text-transform: uppercase; }
+.h-en { font-family: var(--display); font-stretch: 75%; font-weight: 800; letter-spacing: -0.005em; text-wrap: balance; }
+.h-ja { font-family: var(--body); font-weight: 700; letter-spacing: 0.01em; text-wrap: balance; }
+.lead { margin: 0; color: var(--soft); max-width: 36em; }
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+.mk { display: block; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; }
+.mk .dot { fill: currentColor; stroke: none; }
+
+/* header */
+.head { padding-block: 12px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.logo { display: flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none; }
+.logo .mark { height: 36px; width: auto; display: block; }
+.logo .word { height: 13px; width: auto; display: block; }
+.head-r { display: flex; align-items: center; gap: 10px; }
+.backlink { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border: 1px solid #333331; border-radius: 3px; font-size: 14px; color: var(--fg); text-decoration: none; white-space: nowrap; }
+.backlink:hover { border-color: var(--muted); }
+.langs { display: flex; gap: 2px; padding: 2px; border: 1px solid #333331; border-radius: 3px; }
+.langs button { font-family: var(--mono); font-size: 13px; min-width: 44px; min-height: 40px; border: 0; border-radius: 2px; background: transparent; color: var(--muted); cursor: pointer; }
+.langs button[aria-pressed="true"] { background: var(--fg); color: var(--ground); font-weight: 500; }
+/* narrow phones: keep the full logo and the buttons side by side without touching */
+.logo, .logo img { flex: none; }
+@media (max-width: 389px) { .logo { gap: 8px; } .logo .word { height: 11px; } .head { gap: 10px; } .head-r { gap: 6px; } .backlink { padding: 0 9px; font-size: 13px; } }
+@media (max-width: 339px) { .logo .word { height: 10px; } .head { gap: 6px; } .head-r { gap: 4px; } .backlink { padding: 0 6px; font-size: 12px; } .langs button { min-width: 40px; } }
+
+/* buttons */
+.btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 22px; border-radius: 2px; text-decoration: none; font-weight: 700; text-align: center; line-height: 1.3; }
+.btn.solid { background: var(--fg); color: var(--ground); }
+.btn.line { border: 1px solid var(--fg); color: var(--fg); font-weight: 500; }
+
+/* lineup hero: the three fronts, same sarado width, bases on one line */
+.lh .wrap { padding-block: 16px 64px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 28px 40px; }
+.lh-text { flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 18px; padding-bottom: 8px; }
+.lh h1 { margin: 0; }
+.lh h1 .h-en { font-size: clamp(48px, 7vw, 92px); line-height: 0.94; }
+.lh h1 .h-ja { font-size: clamp(34px, 4.6vw, 56px); line-height: 1.22; word-break: keep-all; }
+.strip { flex: 1.3 1 460px; min-width: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.pick { display: flex; flex-direction: column; min-width: 0; text-decoration: none; color: var(--fg); border: 1px solid var(--line); background: #000; }
+.pick img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 5; object-fit: cover; }
+.pick-body { display: flex; flex-direction: column; gap: 4px; padding: 10px 10px 12px; border-top: 1px solid var(--line); }
+.pick .mk { width: 18px; height: 18px; }
+.pick-name { font-family: var(--display); font-stretch: 75%; font-weight: 800; font-size: clamp(19px, 2.6vw, 30px); line-height: 1; letter-spacing: 0.01em; }
+.pick-for { font-size: 12px; line-height: 1.4; color: var(--muted); }
+.pick:hover { border-color: var(--line-2); }
+.pick:hover .pick-for { color: var(--soft); }
+
+/* bands */
+.band { border-top: 1px solid #222220; }
+.band > .wrap { padding-block: 64px; display: flex; flex-direction: column; gap: 28px; }
+.band h2 { margin: 0; }
+.band h2 .h-en { font-size: clamp(36px, 4.5vw, 60px); line-height: 1; }
+.band h2 .h-ja { font-size: clamp(30px, 4vw, 48px); line-height: 1.25; }
+.intro { display: flex; flex-direction: column; gap: 14px; max-width: 640px; }
+.small { margin: 0; font-size: 13px; line-height: 1.7; color: var(--muted); }
+
+/* one band per line */
+.ln > .wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+@media (min-width: 860px) {
+  .ln > .wrap { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 56px; align-items: start; }
+  .ln .gal { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); }
+}
+.gal { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.gal-view { position: relative; }
+.gal-main { display: flex; width: 100%; max-width: 100%; aspect-ratio: 4 / 5; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; background: #000; border: 1px solid var(--line); }
+.gal-main::-webkit-scrollbar { display: none; }
+.gal-main img { display: block; flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; scroll-snap-align: start; }
+.gal-cap { position: absolute; left: 12px; bottom: 10px; display: flex; gap: 10px; align-items: baseline; padding: 4px 8px; background: rgba(10,10,10,0.6); border-radius: 2px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--soft); pointer-events: none; }
+.gal-cap .n { color: var(--muted); font-variant-numeric: tabular-nums; }
+.gal-thumbs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.gal-thumbs button { display: block; padding: 0; border: 1px solid var(--line); border-radius: 0; background: #000; cursor: pointer; opacity: 0.55; transition: opacity 0.2s, border-color 0.2s; }
+.gal-thumbs button img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; }
+.gal-thumbs button:hover { opacity: 0.85; }
+.gal-thumbs button[aria-pressed="true"] { opacity: 1; border-color: var(--fg); }
+.ln-text { min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+.ln-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.ln-head .mk { width: 44px; height: 44px; }
+.ln-name { display: flex; flex-direction: column; gap: 6px; }
+.ln-name .eyebrow { letter-spacing: 0.22em; }
+.ln h2.nm { font-family: var(--display); font-stretch: 75%; font-weight: 800; font-size: clamp(60px, 10vw, 104px); line-height: 0.86; letter-spacing: 0.005em; }
+.badge { align-self: flex-start; padding: 3px 8px; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.12em; white-space: nowrap; }
+.badge.solid { background: var(--fg); color: var(--ground); }
+.badge.line { border: 1px solid var(--dim); color: var(--muted); letter-spacing: 0.06em; }
+.ln-head .badge { margin-left: auto; align-self: center; }
+.tagline { margin: 0; font-size: clamp(21px, 2.6vw, 28px); line-height: 1.4; font-weight: 700; text-wrap: balance; }
+.tagline.l-en { font-family: var(--display); font-stretch: 85%; font-weight: 700; line-height: 1.15; }
+.ln-desc { margin: 0; color: var(--soft); max-width: 34em; }
+.facts { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.facts div { background: var(--surface); padding: 12px; min-width: 0; }
+.facts div.full { grid-column: 1 / -1; }
+.facts dt { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--muted); }
+.facts dt.l-ja { font-family: var(--body); letter-spacing: 0.06em; }
+.facts dd { margin: 0; font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 20px; line-height: 1.35; font-variant-numeric: tabular-nums; }
+.ln-buy { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.ln-buy .btn { width: 100%; }
+@media (min-width: 520px) { .ln-buy { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.v2note { margin: 0; padding: 14px 16px; border: 1px solid var(--line-2); font-size: 14px; line-height: 1.75; color: var(--soft); }
+.v2note b { color: var(--fg); }
+.tolink { align-self: flex-start; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; color: var(--muted); text-underline-offset: 4px; }
+.tolink:hover { color: var(--fg); }
+
+/* lunar: the three in the same trick, one scale */
+.lunar { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+@media (min-width: 720px) { .lunar { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; } }
+.lunar figure { margin: 0; min-width: 0; border: 1px solid var(--line); background: #000; display: flex; flex-direction: column; }
+.lunar img { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 5 / 4; object-fit: cover; }
+.lunar figcaption { display: flex; align-items: center; gap: 10px; padding: 10px 12px 12px; border-top: 1px solid var(--line); }
+.lunar figcaption .mk { width: 18px; height: 18px; }
+.lunar figcaption b { font-family: var(--display); font-stretch: 75%; font-weight: 800; font-size: 22px; line-height: 1; letter-spacing: 0.01em; }
+
+/* specs: one table, the three lines side by side */
+.spec-scroll { overflow-x: auto; border: 1px solid var(--line); }
+.spec { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.spec th, .spec td { padding: 14px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.spec tbody tr:last-child th, .spec tbody tr:last-child td { border-bottom: 0; }
+.spec thead th { background: var(--surface); font-weight: 400; }
+.spec thead .ln-col { display: flex; align-items: center; gap: 8px; }
+.spec thead .ln-col .mk { width: 18px; height: 18px; }
+.spec thead .ln-col b { font-family: var(--display); font-stretch: 75%; font-weight: 800; font-size: 22px; line-height: 1; letter-spacing: 0.01em; }
+.spec tbody th { width: 26%; font-size: 13px; font-weight: 400; line-height: 1.5; color: var(--muted); }
+.spec td { font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 19px; line-height: 1.3; }
+.spec td small { display: block; margin-top: 2px; font-family: var(--body); font-size: 12px; font-weight: 400; color: var(--muted); }
+.spec td .unit { font-size: 0.8em; font-weight: 500; }
+@media (max-width: 479px) { .spec th, .spec td { padding: 11px 6px; } .spec td { font-size: 15px; } .spec thead .ln-col { flex-direction: column; align-items: flex-start; gap: 5px; } .spec thead .ln-col b { font-size: 17px; } .spec thead .ln-col .mk { width: 14px; height: 14px; } .spec tbody th { width: 22%; font-size: 12px; } }
+
+/* chooser */
+.choose { display: flex; flex-direction: column; border-top: 1px solid var(--line-2); }
+.choose a { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 76px; padding: 12px 0; border-bottom: 1px solid var(--line-2); text-decoration: none; color: var(--fg); }
+.choose .if { font-size: 16px; line-height: 1.5; min-width: 0; }
+.choose .then { flex: none; display: flex; align-items: center; gap: 10px; }
+.choose .then .mk { width: 22px; height: 22px; }
+.choose .then b { font-family: var(--display); font-stretch: 75%; font-weight: 800; font-size: 28px; line-height: 1; min-width: 4.2ch; }
+.choose a:hover .if { color: var(--soft); }
+
+/* shared structure */
+.same { display: flex; flex-wrap: wrap; gap: 28px 48px; align-items: flex-start; }
+.same .intro { flex: 1 1 340px; }
+.same ul { flex: 1 1 300px; min-width: 0; margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; border-top: 1px solid var(--line-2); }
+.same li { display: grid; grid-template-columns: 9em minmax(0, 1fr); gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line-2); font-size: 15px; line-height: 1.6; }
+.same li .k { color: var(--muted); font-size: 13px; padding-top: 1px; }
+
+/* buy */
+.shops { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.shop { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 96px; padding: 20px; border-radius: 2px; text-decoration: none; }
+.shop.solid { background: var(--fg); color: var(--ground); }
+.shop.line { border: 1px solid var(--line-2); color: var(--fg); }
+.shop .txt { display: flex; flex-direction: column; gap: 2px; }
+.shop .where { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; }
+.shop .where.l-ja { font-family: var(--body); letter-spacing: 0.1em; }
+.shop.solid .where, .shop.solid .desc { color: #3a3a38; }
+.shop.line .where, .shop.line .desc { color: var(--muted); }
+.shop .name { font-family: var(--display); font-stretch: 80%; font-weight: 800; font-size: 28px; line-height: 1.1; }
+.shop .desc { font-size: 14px; }
+.shop .arrow { font-family: var(--mono); font-size: 22px; }
+.rowlinks { display: flex; flex-direction: column; border-top: 1px solid var(--line-2); }
+.rowlink { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 0 4px; border-bottom: 1px solid var(--line-2); text-decoration: none; color: var(--fg); font-weight: 500; }
+.rowlink .arrow { font-family: var(--mono); }
+.rowlink .note { color: var(--muted); font-weight: 400; }
+
+.foot { border-top: 1px solid #222220; }
+.foot .wrap { padding-block: 40px 56px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
+.foot .stack { width: 140px; height: auto; display: block; }
+.foot .fine { display: flex; flex-direction: column; gap: 6px; max-width: 560px; }
+.foot .fine p { margin: 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
+.foot .fine .mono { font-family: var(--mono); letter-spacing: 0.06em; }
+.gc-note { display: none; } html.gc-on .gc-note:not(.l-en), html.gc-on[data-lang="en"] .gc-note.l-en { display: block; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .gal-thumbs button { transition: none; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="mk-axis" viewBox="0 0 24 24"><path d="M12.56 4.02 A8 8 0 1 0 19.19 8.49"/><line x1="5.57" y1="21.53" x2="18.43" y2="2.47"/></symbol>
+  <symbol id="mk-focus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle class="dot" cx="12" cy="12" r="2.4"/></symbol>
+  <symbol id="mk-ellipse" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="6.5"/><circle class="dot" cx="12" cy="12" r="2.4"/></symbol>
+</svg>
+
+<header id="top">
+  <div class="wrap head">
+    <a class="logo" href="./" aria-label="EDEX Kendama">
+      <img class="mark" src="img/edex-mark-white.png" alt="">
+      <img class="word" src="img/edex-wordmark-white.png" alt="">
+    </a>
+    <div class="head-r">
+      <a class="backlink" href="./"><span class="l-ja">← トップ</span><span class="l-en">← Home</span></a>
+      <div class="langs" role="group" aria-label="Language / 言語">
+        <button type="button" data-set-lang="ja" lang="ja" aria-pressed="false">JP</button>
+        <button type="button" data-set-lang="en" lang="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="lh" aria-labelledby="lh-title">
+  <div class="wrap">
+    <div class="lh-text">
+      <p class="eyebrow">PLAKEN · Lineup</p>
+      <h1 id="lh-title"><span class="h-ja l-ja" lang="ja" style="display:block">3つのライン。<br>ひとつの構造。</span><span class="h-en l-en" lang="en" style="display:block">Three lines.<br>One frame.</span></h1>
+      <p class="lead l-ja" lang="ja">3Dプリントのけん玉 PLAKEN は、AXIS・FOCUS・ELLIPSE の3本。構造は3本とも同じで、剣の長さと皿の形で得意な技が変わります。</p>
+      <p class="lead l-en" lang="en">PLAKEN, the 3D-printed kendama, comes in three lines: AXIS, FOCUS and ELLIPSE. All three share one frame. Ken length and cup shape change what each one does best.</p>
+    </div>
+    <nav class="strip" aria-label="Lineup">
+      <a class="pick" href="#axis">
+        <img src="img/plaken/lineup-axis.webp" width="600" height="1000" alt="PLAKEN AXIS" fetchpriority="high">
+        <span class="pick-body"><svg class="mk" aria-hidden="true"><use href="#mk-axis"/></svg><span class="pick-name">AXIS</span><span class="pick-for"><span class="l-ja">フリップ</span><span class="l-en">Flips</span></span></span>
+      </a>
+      <a class="pick" href="#focus">
+        <img src="img/plaken/lineup-focus.webp" width="600" height="1000" alt="PLAKEN FOCUS" fetchpriority="high">
+        <span class="pick-body"><svg class="mk" aria-hidden="true"><use href="#mk-focus"/></svg><span class="pick-name">FOCUS</span><span class="pick-for"><span class="l-ja">月面・止める技</span><span class="l-en">Lunar, balance</span></span></span>
+      </a>
+      <a class="pick" href="#ellipse">
+        <img src="img/plaken/lineup-ellipse.webp" width="600" height="1000" alt="PLAKEN ELLIPSE" fetchpriority="high">
+        <span class="pick-body"><svg class="mk" aria-hidden="true"><use href="#mk-ellipse"/></svg><span class="pick-name">ELLIPSE</span><span class="pick-for"><span class="l-ja">ジャグリング</span><span class="l-en">Juggling</span></span></span>
+      </a>
+    </nav>
+  </div>
+</section>
+
+<!-- AXIS -->
+<section class="band ln" id="axis" aria-labelledby="axis-title">
+  <div class="wrap">
+    <div class="gal" data-line="axis" data-name="PLAKEN AXIS"></div>
+    <div class="ln-text">
+      <div class="ln-head">
+        <svg class="mk" aria-hidden="true"><use href="#mk-axis"/></svg>
+        <div class="ln-name"><p class="eyebrow">PLAKEN</p><h2 class="nm" id="axis-title">AXIS</h2></div>
+        <span class="badge line"><span class="l-ja">旧 HOLLOW Frame V2</span><span class="l-en">Formerly HOLLOW Frame V2</span></span>
+      </div>
+      <p class="tagline l-ja" lang="ja">フリップが、いちばんしやすい。</p>
+      <p class="tagline l-en" lang="en">The easiest of the three for flips.</p>
+      <p class="ln-desc l-ja" lang="ja">剣はやや短く、小柄で軽快。これからつくるモデルは、すべてAXISを基準に比べていきます。</p>
+      <p class="ln-desc l-en" lang="en">A slightly shorter ken and a compact, nimble feel. Every model we make from here on is measured against AXIS.</p>
+      <dl class="facts">
+        <div><dt class="l-ja">皿</dt><dt class="l-en">Cups</dt><dd><span class="l-ja">丸い</span><span class="l-en">Round</span></dd></div>
+        <div><dt class="l-ja">剣の長さ</dt><dt class="l-en">Ken</dt><dd><span class="l-ja">やや短い</span><span class="l-en">Slightly short</span></dd></div>
+        <div class="full"><dt class="l-ja">価格</dt><dt class="l-en">Price</dt><dd><span class="l-ja">¥5,500（剣のみ）</span><span class="l-en">¥5,500 (ken only)</span></dd></div>
+      </dl>
+      <div class="ln-buy l-ja">
+        <a class="btn solid" href="https://edex-kendama.stores.jp/">AXISを買う</a>
+        <a class="btn line" href="https://fanken.jp/collections/edex-kendama-%E6%97%A5%E6%9C%AC">海外の方は FANKEN へ</a>
+      </div>
+      <div class="ln-buy l-en">
+        <a class="btn solid" href="https://fanken.jp/en/collections/edex-kendama-%E6%97%A5%E6%9C%AC">Buy AXIS at FANKEN</a>
+        <a class="btn line" href="https://edex-kendama.stores.jp/">In Japan? Our STORES shop</a>
+      </div>
+      <a class="tolink" href="#specs"><span class="l-ja">3本のスペックを比べる ↓</span><span class="l-en">Compare specs ↓</span></a>
+      <p class="v2note l-ja" lang="ja"><b>V2をお持ちの方へ。</b>HOLLOW Frame V2 は、PLAKEN AXIS に名前を変えて続きます。形・重さ・遊び心地はV2と同じなので、買い直す必要はありません。変わったのは見た目だけで、皿胴の黒いロゴをなくしました。</p>
+      <p class="v2note l-en" lang="en"><b>Have a V2?</b> HOLLOW Frame V2 carries on as PLAKEN AXIS. Shape, weight and feel are the same as V2, so there’s no need to buy it again. Only the look changed: the black logo on the sarado is gone.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOCUS -->
+<section class="band ln" id="focus" aria-labelledby="focus-title">
+  <div class="wrap">
+    <div class="gal" data-line="focus" data-name="PLAKEN FOCUS"></div>
+    <div class="ln-text">
+      <div class="ln-head">
+        <svg class="mk" aria-hidden="true"><use href="#mk-focus"/></svg>
+        <div class="ln-name"><p class="eyebrow">PLAKEN</p><h2 class="nm" id="focus-title">FOCUS</h2></div>
+        <span class="badge solid"><span class="l-ja">NEW · 11.23 発売</span><span class="l-en">NEW · OUT 23 NOV</span></span>
+      </div>
+      <p class="tagline l-ja" lang="ja">剣は長いのに、月面がよく乗る。</p>
+      <p class="tagline l-en" lang="en">A long ken, and Lunar still sits easily.</p>
+      <p class="ln-desc l-ja" lang="ja">どっしりした安定感で、止める技に強い。はじめてのPLAKENで迷ったら、FOCUSから。</p>
+      <p class="ln-desc l-en" lang="en">A planted, steady feel that suits balance tricks. If you’re choosing your first PLAKEN, start with FOCUS.</p>
+      <dl class="facts">
+        <div><dt class="l-ja">皿</dt><dt class="l-en">Cups</dt><dd><span class="l-ja">丸い</span><span class="l-en">Round</span></dd></div>
+        <div><dt class="l-ja">剣の長さ</dt><dt class="l-en">Ken</dt><dd><span class="l-ja">長い</span><span class="l-en">Long</span></dd></div>
+        <div class="full"><dt class="l-ja">価格</dt><dt class="l-en">Price</dt><dd><span class="l-ja">¥5,500（剣のみ）</span><span class="l-en">¥5,500 (ken only)</span></dd></div>
+      </dl>
+      <div class="ln-buy l-ja">
+        <a class="btn solid" href="https://edex-kendama.stores.jp/">FOCUSを買う</a>
+        <a class="btn line" href="https://fanken.jp/collections/edex-kendama-%E6%97%A5%E6%9C%AC">海外の方は FANKEN へ</a>
+      </div>
+      <div class="ln-buy l-en">
+        <a class="btn solid" href="https://fanken.jp/en/collections/edex-kendama-%E6%97%A5%E6%9C%AC">Buy FOCUS at FANKEN</a>
+        <a class="btn line" href="https://edex-kendama.stores.jp/">In Japan? Our STORES shop</a>
+      </div>
+      <a class="tolink" href="#specs"><span class="l-ja">3本のスペックを比べる ↓</span><span class="l-en">Compare specs ↓</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ELLIPSE -->
+<section class="band ln" id="ellipse" aria-labelledby="ellipse-title">
+  <div class="wrap">
+    <div class="gal" data-line="ellipse" data-name="PLAKEN ELLIPSE"></div>
+    <div class="ln-text">
+      <div class="ln-head">
+        <svg class="mk" aria-hidden="true"><use href="#mk-ellipse"/></svg>
+        <div class="ln-name"><p class="eyebrow">PLAKEN</p><h2 class="nm" id="ellipse-title">ELLIPSE</h2></div>
+        <span class="badge solid"><span class="l-ja">NEW · 11.23 発売</span><span class="l-en">NEW · OUT 23 NOV</span></span>
+      </div>
+      <p class="tagline l-ja" lang="ja">皿は丸い、をやめてみた。</p>
+      <p class="tagline l-en" lang="en">Who said cups have to be round?</p>
+      <p class="ln-desc l-ja" lang="ja">えぐれた皿胴は、紐が一度かかると抜けにくい。かかりやすいところを削っていったら、皿が楕円になりました。月面の乗りやすさを少しゆずるかわりに、ジャグリングで紐がややかかりにくい。手に持つと、スリムで扱いやすい。</p>
+      <p class="ln-desc l-en" lang="en">A scooped sarado holds on to the string once it catches. We shaved away the spots where it caught, and the cups came out oval. It gives up a little Lunar ease; in return the string catches a little less when you juggle. In the hand it feels slim and easy to handle.</p>
+      <dl class="facts">
+        <div><dt class="l-ja">皿</dt><dt class="l-en">Cups</dt><dd><span class="l-ja">楕円</span><span class="l-en">Oval</span></dd></div>
+        <div><dt class="l-ja">剣の長さ</dt><dt class="l-en">Ken</dt><dd><span class="l-ja">長い</span><span class="l-en">Long</span></dd></div>
+        <div class="full"><dt class="l-ja">価格</dt><dt class="l-en">Price</dt><dd><span class="l-ja">¥5,500（剣のみ）</span><span class="l-en">¥5,500 (ken only)</span></dd></div>
+      </dl>
+      <div class="ln-buy l-ja">
+        <a class="btn solid" href="https://edex-kendama.stores.jp/">ELLIPSEを買う</a>
+        <a class="btn line" href="https://fanken.jp/collections/edex-kendama-%E6%97%A5%E6%9C%AC">海外の方は FANKEN へ</a>
+      </div>
+      <div class="ln-buy l-en">
+        <a class="btn solid" href="https://fanken.jp/en/collections/edex-kendama-%E6%97%A5%E6%9C%AC">Buy ELLIPSE at FANKEN</a>
+        <a class="btn line" href="https://edex-kendama.stores.jp/">In Japan? Our STORES shop</a>
+      </div>
+      <a class="tolink" href="#specs"><span class="l-ja">3本のスペックを比べる ↓</span><span class="l-en">Compare specs ↓</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="lunar" aria-labelledby="lunar-title">
+  <div class="wrap">
+    <div class="intro">
+      <p class="eyebrow">Lunar</p>
+      <h2 id="lunar-title"><span class="h-ja l-ja" lang="ja" style="display:block">3本で、月面着陸。</span><span class="h-en l-en" lang="en" style="display:block">Lunar, all three.</span></h2>
+      <p class="lead l-ja" lang="ja">3本それぞれを、月面着陸で玉に乗せました。</p>
+      <p class="lead l-en" lang="en">Each of the three, landed in Lunar on the tama.</p>
+    </div>
+    <div class="lunar">
+      <figure><img src="img/plaken/lunar-axis.webp" width="1000" height="800" loading="lazy" decoding="async" alt="PLAKEN AXIS の月面着陸" data-alt-ja="PLAKEN AXIS の月面着陸" data-alt-en="PLAKEN AXIS in Lunar"><figcaption><svg class="mk" aria-hidden="true"><use href="#mk-axis"/></svg><b>AXIS</b></figcaption></figure>
+      <figure><img src="img/plaken/lunar-focus.webp" width="1000" height="800" loading="lazy" decoding="async" alt="PLAKEN FOCUS の月面着陸" data-alt-ja="PLAKEN FOCUS の月面着陸" data-alt-en="PLAKEN FOCUS in Lunar"><figcaption><svg class="mk" aria-hidden="true"><use href="#mk-focus"/></svg><b>FOCUS</b></figcaption></figure>
+      <figure><img src="img/plaken/lunar-ellipse.webp" width="1000" height="800" loading="lazy" decoding="async" alt="PLAKEN ELLIPSE の月面着陸" data-alt-ja="PLAKEN ELLIPSE の月面着陸" data-alt-en="PLAKEN ELLIPSE in Lunar"><figcaption><svg class="mk" aria-hidden="true"><use href="#mk-ellipse"/></svg><b>ELLIPSE</b></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="specs" aria-labelledby="specs-title">
+  <div class="wrap">
+    <div class="intro">
+      <p class="eyebrow">Specs</p>
+      <h2 id="specs-title"><span class="h-ja l-ja" lang="ja" style="display:block">3本のスペック</span><span class="h-en l-en" lang="en" style="display:block">Specs, side by side</span></h2>
+    </div>
+    <div class="spec-scroll">
+      <table class="spec">
+        <thead><tr><th scope="col"><span class="l-ja">項目</span><span class="l-en">Item</span></th><th scope="col"><span class="ln-col"><svg class="mk" aria-hidden="true"><use href="#mk-axis"/></svg><b>AXIS</b></span></th><th scope="col"><span class="ln-col"><svg class="mk" aria-hidden="true"><use href="#mk-focus"/></svg><b>FOCUS</b></span></th><th scope="col"><span class="ln-col"><svg class="mk" aria-hidden="true"><use href="#mk-ellipse"/></svg><b>ELLIPSE</b></span></th></tr></thead>
+        <tbody>
+          <tr><th scope="row"><span class="l-ja">剣の長さ</span><span class="l-en">Ken length</span></th><td><span class="v">165<span class="unit"> mm</span></span></td><td><span class="v">168<span class="unit"> mm</span></span></td><td><span class="v">168<span class="unit"> mm</span></span></td></tr>
+          <tr><th scope="row"><span class="l-ja">大皿・小皿</span><span class="l-en">Big and small cups</span></th><td><span class="v">51<span class="unit"> mm</span></span></td><td><span class="v">51<span class="unit"> mm</span></span></td><td><span class="v">51 × 47<span class="unit"> mm</span></span><small><span class="l-ja">楕円</span><span class="l-en">oval</span></small></td></tr>
+          <tr><th scope="row"><span class="l-ja">中皿（最大径）</span><span class="l-en">Base cup (max)</span></th><td><span class="v">42<span class="unit"> mm</span></span></td><td><span class="v">42<span class="unit"> mm</span></span></td><td><span class="v">42<span class="unit"> mm</span></span></td></tr>
+          <tr><th scope="row"><span class="l-ja">重さ</span><span class="l-en">Weight</span></th><td><span class="v"><span class="l-ja">約</span><span class="l-en">≈ </span>83<span class="unit"> g</span></span></td><td><span class="v"><span class="l-ja">約</span><span class="l-en">≈ </span>82.5<span class="unit"> g</span></span></td><td><span class="v"><span class="l-ja">約</span><span class="l-en">≈ </span>81.5<span class="unit"> g</span></span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small l-ja" lang="ja">重さは1本ずつ少し違います。</p>
+    <p class="small l-en" lang="en">Weight varies slightly from one unit to the next.</p>
+  </div>
+</section>
+
+<section class="band" id="choose" aria-labelledby="choose-title">
+  <div class="wrap">
+    <div class="intro">
+      <p class="eyebrow">Which one?</p>
+      <h2 id="choose-title"><span class="h-ja l-ja" lang="ja" style="display:block">どれを選ぶ？</span><span class="h-en l-en" lang="en" style="display:block">Which one is yours?</span></h2>
+    </div>
+    <nav class="choose" aria-label="Which one?">
+      <a href="#axis"><span class="if"><span class="l-ja">フリップをよくやる。<br>小柄な剣が好き。</span><span class="l-en">You flip a lot,<br>or like a compact ken.</span></span><span class="then"><svg class="mk" aria-hidden="true"><use href="#mk-axis"/></svg><b>AXIS</b></span></a>
+      <a href="#focus"><span class="if"><span class="l-ja">月面を安定させたい。<br>はじめてのPLAKEN。</span><span class="l-en">You want a steady Lunar,<br>or it’s your first PLAKEN.</span></span><span class="then"><svg class="mk" aria-hidden="true"><use href="#mk-focus"/></svg><b>FOCUS</b></span></a>
+      <a href="#ellipse"><span class="if"><span class="l-ja">ジャグリングで、<br>紐のかかりが気になる。</span><span class="l-en">The string keeps catching<br>when you juggle.</span></span><span class="then"><svg class="mk" aria-hidden="true"><use href="#mk-ellipse"/></svg><b>ELLIPSE</b></span></a>
+    </nav>
+  </div>
+</section>
+
+<section class="band" id="frame" aria-labelledby="frame-title">
+  <div class="wrap">
+    <div class="same">
+      <div class="intro">
+        <p class="eyebrow">HOLLOW Frame</p>
+        <h2 id="frame-title"><span class="h-ja l-ja" lang="ja" style="display:block">構造は、<br>3本とも同じ。</span><span class="h-en l-en" lang="en" style="display:block">Inside, all three are the same.</span></h2>
+        <p class="lead l-ja" lang="ja">3本とも、HOLLOW Frame と呼んでいる同じ構造です。皿胴から剣の付け根までなめらかにつながり、上から見るとえぐれている。現行の実用的なけん玉では、ほかに見ない形です。</p>
+        <p class="lead l-en" lang="en">All three are built on the same structure, which we call HOLLOW Frame. The sarado flows smoothly into the base of the ken and is scooped out when seen from above. You won’t find this shape on any other practical kendama today.</p>
+        <div class="btns"><a class="btn line" href="./#structure"><span class="l-ja">分解して見る</span><span class="l-en">See it taken apart</span></a></div>
+      </div>
+      <ul>
+        <li><span class="k"><span class="l-ja">皿胴と剣</span><span class="l-en">Sarado and ken</span></span><span><span class="l-ja">ひとつのフレーム</span><span class="l-en">One frame</span></span></li>
+        <li><span class="k"><span class="l-ja">皿</span><span class="l-en">Cups</span></span><span><span class="l-ja">TPU。当たりをやわらげ、剣を守る</span><span class="l-en">TPU, which softens each catch and protects the ken</span></span></li>
+        <li><span class="k"><span class="l-ja">ルナホール</span><span class="l-en">Luna hole</span></span><span><span class="l-ja">中皿でふさいで完成</span><span class="l-en">Closed by the base cup</span></span></li>
+        <li><span class="k"><span class="l-ja">ストリングホール</span><span class="l-en">String holes</span></span><span><span class="l-ja">2つ。紐の長さを簡単に変えられる</span><span class="l-en">Two, so string length is easy to change</span></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="buy" aria-labelledby="buy-title">
+  <div class="wrap">
+    <div class="intro">
+      <p class="eyebrow">Where to buy</p>
+      <h2 id="buy-title"><span class="h-ja l-ja" lang="ja" style="display:block">PLAKENを手に入れる</span><span class="h-en l-en" lang="en" style="display:block">Get a PLAKEN.</span></h2>
+    </div>
+    <div class="shops l-ja">
+      <a class="shop solid" href="https://edex-kendama.stores.jp/">
+        <span class="txt"><span class="where l-ja">日本国内</span><span class="name">EDEX Store</span><span class="desc">AXIS・FOCUS・ELLIPSE · 国内発送のみ</span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="shop line" href="https://fanken.jp/collections/edex-kendama-%E6%97%A5%E6%9C%AC">
+        <span class="txt"><span class="where l-ja">海外の方</span><span class="name">FANKEN</span><span class="desc">海外発送に対応したパートナーショップ</span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+    <div class="shops l-en">
+      <a class="shop solid" href="https://fanken.jp/en/collections/edex-kendama-%E6%97%A5%E6%9C%AC">
+        <span class="txt"><span class="where">Worldwide</span><span class="name">FANKEN</span><span class="desc">Our partner shop in Japan, ships overseas</span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="shop line" href="https://edex-kendama.stores.jp/">
+        <span class="txt"><span class="where">In Japan</span><span class="name">EDEX Store</span><span class="desc">Ships within Japan only</span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+    <nav class="rowlinks" aria-label="Links">
+      <a class="rowlink" href="./"><span><span class="l-ja">トップページへ</span><span class="l-en">Back to the home page</span></span><span class="arrow" aria-hidden="true">→</span></a>
+      <a class="rowlink" href="https://www.instagram.com/edex_kendama"><span><span class="l-ja">Instagramで3本の違いを見る</span><span class="l-en">See the three side by side on Instagram</span></span><span class="arrow" aria-hidden="true">→</span></a>
+      <a class="rowlink" href="https://note.com/edex_kendama"><span><span class="l-ja">開発の記録をnoteで読む</span><span class="l-en">Read the development notes on note <span class="note">(Japanese)</span></span></span><span class="arrow" aria-hidden="true">→</span></a>
+    </nav>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <img class="stack" src="img/edex-stack-white.png" alt="EDEX Kendama" width="426" height="480">
+    <div class="fine">
+      <p class="l-ja" lang="ja">写真は実物です。背景は撮影後に整え、一部は傾きを補正しています。</p>
+      <p class="l-en" lang="en">Photos show real units. Backgrounds were cleaned up after shooting, and some photos were straightened.</p>
+      <p class="gc-note l-ja" lang="ja">訪問数は、クッキーを使わないアクセス解析（GoatCounter）で数えています。個人を特定する情報は集めていません。</p>
+      <p class="gc-note l-en" lang="en">Visits are counted with GoatCounter, which uses no cookies and collects no personal data.</p>
+      <p class="mono">edexkendama.com · © 2026 EDEX Kendama</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Visit counting with GoatCounter: no cookies, no personal data, and only on edexkendama.com.
+   Clicks on shop / SNS / line links are counted as events named click/<what>/<where>/<lang>. */
+(function () {
+  var CODE = 'edexkendama';  /* GoatCounter site code (the part before .goatcounter.com). Empty = counting off. */
+  var on = !!CODE && location.hostname === 'edexkendama.com';
+  window.edexTrack = function (name) {
+    if (!on || !window.goatcounter || !window.goatcounter.count) return;
+    var lang = document.documentElement.getAttribute('data-lang') || 'ja';
+    window.goatcounter.count({ path: name + '/' + lang, title: name, event: true });
+  };
+  if (!on) return;
+  document.documentElement.classList.add('gc-on');
+  var s = document.createElement('script');
+  s.async = true; s.src = 'https://gc.zgo.at/count.js';
+  s.setAttribute('data-goatcounter', 'https://' + CODE + '.goatcounter.com/count');
+  document.head.appendChild(s);
+  var kinds = [[/stores\.jp/, 'buy-stores'], [/fanken\.jp/, 'buy-fanken'], [/instagram\.com/, 'follow-instagram'],
+               [/\/\/(www\.)?x\.com/, 'follow-x'], [/note\.com/, 'note'], [/^mailto:/, 'contact'],
+               [/^#axis$/, 'line-axis'], [/^#focus$/, 'line-focus'], [/^#ellipse$/, 'line-ellipse'],
+               [/#structure$/, 'open-structure'], [/^#specs$/, 'open-specs']];
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href'), kind = null;
+    for (var i = 0; i < kinds.length; i++) if (kinds[i][0].test(href)) { kind = kinds[i][1]; break; }
+    if (!kind) return;
+    var sec = a.closest('section, header, footer');
+    var where = sec ? (sec.id || (sec.className || '').split(' ')[0] || sec.tagName.toLowerCase()) : 'page';
+    window.edexTrack('click/' + kind + '/' + where);
+  }, true);
+})();
+</script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- photo viewers: swipe on phones, thumbnails everywhere ---------- */
+  var VIEWS = [['正面', 'Front'], ['側面', 'Side'], ['背面', 'Back'], ['側面', 'Side'], ['上から', 'From above'], ['下から', 'From below']];
+  Array.prototype.forEach.call(document.querySelectorAll('.gal[data-line]'), function (g) {
+    var key = g.getAttribute('data-line'), name = g.getAttribute('data-name');
+    var view = document.createElement('div'); view.className = 'gal-view';
+    var main = document.createElement('div'); main.className = 'gal-main'; main.tabIndex = 0;
+    main.setAttribute('data-label-ja', name + 'の写真。横にスワイプで切り替え');
+    main.setAttribute('data-label-en', 'Photos of ' + name + '. Swipe sideways for more');
+    main.setAttribute('role', 'group');
+    var cap = document.createElement('p'); cap.className = 'gal-cap'; cap.setAttribute('aria-hidden', 'true');
+    var capT = document.createElement('span'), capN = document.createElement('span'); capN.className = 'n';
+    cap.appendChild(capT); cap.appendChild(capN);
+    var thumbs = document.createElement('div'); thumbs.className = 'gal-thumbs';
+    thumbs.setAttribute('role', 'group');
+    thumbs.setAttribute('data-label-ja', '写真を選ぶ'); thumbs.setAttribute('data-label-en', 'Choose a photo');
+    var btns = [];
+    VIEWS.forEach(function (v, i) {
+      var im = document.createElement('img');
+      im.src = 'img/plaken/' + key + '-' + (i + 1) + '.webp'; im.width = 900; im.height = 1125;
+      im.loading = i === 0 ? 'eager' : 'lazy'; im.decoding = 'async';
+      im.setAttribute('data-alt-ja', name + '（' + v[0] + '）'); im.setAttribute('data-alt-en', name + ', ' + v[1].toLowerCase());
+      im.alt = name;
+      main.appendChild(im);
+      var b = document.createElement('button'); b.type = 'button';
+      b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+      b.setAttribute('data-label-ja', v[0]); b.setAttribute('data-label-en', v[1]);
+      var t = document.createElement('img'); t.src = 'img/plaken/' + key + '-' + (i + 1) + '-t.webp'; t.width = 180; t.height = 225; t.alt = ''; t.loading = 'lazy';
+      b.appendChild(t);
+      b.addEventListener('click', function () { go(i, true); });
+      thumbs.appendChild(b); btns.push(b);
+    });
+    view.appendChild(main); view.appendChild(cap); g.appendChild(view); g.appendChild(thumbs);
+    var cur = -1;
+    function mark(i) {
+      if (i === cur) return; cur = i;
+      btns.forEach(function (b, k) { b.setAttribute('aria-pressed', k === i ? 'true' : 'false'); });
+      var l = root.getAttribute('data-lang') === 'en' ? 1 : 0;
+      capT.textContent = VIEWS[i][l]; capN.textContent = (i + 1) + ' / ' + VIEWS.length;
+    }
+    function go(i, smooth) {
+      main.scrollTo({ left: i * main.clientWidth, behavior: smooth && !reduce ? 'smooth' : 'auto' });
+      mark(i);
+    }
+    var tick = false;
+    main.addEventListener('scroll', function () {
+      if (tick) return; tick = true;
+      requestAnimationFrame(function () { tick = false; mark(Math.round(main.scrollLeft / Math.max(main.clientWidth, 1))); });
+    }, { passive: true });
+    g.__relabel = function () { var i = cur; cur = -1; mark(Math.max(i, 0)); };
+    mark(0);
+  });
+
+  /* ---------- language ---------- */
+  var langBtns = Array.prototype.slice.call(document.querySelectorAll('[data-set-lang]'));
+  function applyLang(l) {
+    root.setAttribute('data-lang', l); root.lang = l;
+    langBtns.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-set-lang') === l ? 'true' : 'false'); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-label-' + l + ']'), function (el) { el.setAttribute('aria-label', el.getAttribute('data-label-' + l)); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-alt-' + l + ']'), function (el) { el.alt = el.getAttribute('data-alt-' + l); });
+    Array.prototype.forEach.call(document.querySelectorAll('.gal'), function (g) { if (g.__relabel) g.__relabel(); });
+  }
+  langBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var l = b.getAttribute('data-set-lang');
+      applyLang(l);
+      try { localStorage.setItem('edex-lang', l); } catch (e) {}
+      if (location.hash === '#en' || location.hash === '#ja') { try { history.replaceState(null, '', '#' + l); } catch (e) {} }
+    });
+  });
+  applyLang(root.getAttribute('data-lang') || 'ja');
+})();
+</script>
+</body>
+</html>

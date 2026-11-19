@@ -96,6 +96,9 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .hero-photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; background: #000; -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, #000 62%, transparent 100%); }
 .hero-text { flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
 .hero h1 { margin: 0; }
+.newline { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px 0 6px; border: 1px solid var(--line-2); border-radius: 2px; color: var(--fg); text-decoration: none; font-size: 14px; line-height: 1.4; }
+.newline:hover { border-color: var(--muted); }
+.newline .badge { flex: none; }
 .hero h1 .h-en { font-size: clamp(46px, 6.5vw, 88px); line-height: 0.96; }
 .hero h1 .h-ja { font-size: clamp(34px, 5.2vw, 66px); line-height: 1.25; }
 
@@ -277,7 +280,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
       <img class="word" src="img/edex-wordmark-white.png" alt="">
     </a>
     <div class="head-r">
-      <a class="taplink" href="#spec"><span class="l-ja">スペック</span><span class="l-en">Specs</span></a>
+      <a class="taplink" href="plaken.html#specs"><span class="l-ja">スペック</span><span class="l-en">Specs</span></a>
       <div class="langs" role="group" aria-label="Language / 言語">
         <button type="button" data-set-lang="ja" lang="ja" aria-pressed="false">JP</button>
         <button type="button" data-set-lang="en" lang="en" aria-pressed="false">EN</button>
@@ -292,6 +295,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
       <img src="img/v2-hero.webp" width="1080" height="1440" data-alt-ja="PLAKEN HOLLOW Frame V2。黒背景" data-alt-en="PLAKEN HOLLOW Frame V2 on a black background" alt="">
     </div>
     <div class="hero-text">
+      <a class="newline" href="plaken.html" data-lineup><span class="badge solid">NEW</span><span><span class="l-ja">FOCUS・ELLIPSE 11/23 発売 →</span><span class="l-en">FOCUS and ELLIPSE, out 23 Nov →</span></span></a>
       <p class="eyebrow l-ja" lang="ja">3Dプリントのけん玉 · 日本で設計・製造</p>
       <p class="eyebrow l-en" lang="en">3D-printed kendama · Designed &amp; printed in Japan</p>
       <h1 id="hero-title">
@@ -314,7 +318,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 
 <div class="track" id="structure">
   <div class="stage" id="stage">
-    <canvas id="cv" role="img" data-label-ja="PLAKEN HOLLOW Frame V2の3D映像。スクロールで分解し、皿・ルナホール・ストリングホールを見せる" data-label-en="3D view of PLAKEN HOLLOW Frame V2. Scrolling takes it apart and shows the cups, luna hole and string holes"></canvas>
+    <canvas id="cv" role="img" data-label-ja="PLAKEN HOLLOW Frame（V2）の3D映像。スクロールで分解し、皿・ルナホール・ストリングホールを見せる" data-label-en="3D view of PLAKEN HOLLOW Frame (V2). Scrolling takes it apart and shows the cups, luna hole and string holes"></canvas>
     <div class="sload" id="sload" hidden><span class="l-ja">読み込み中…</span><span class="l-en">Loading…</span></div>
     <div class="segs" id="segs" aria-hidden="true"></div>
     <div class="sbar">
@@ -327,7 +331,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 
     <section class="cap" data-from="0" data-to="15" data-step="01">
       <div class="inner">
-        <p class="eyebrow">PLAKEN HOLLOW Frame V2</p>
+        <p class="eyebrow">PLAKEN HOLLOW Frame</p>
         <h2 class="h-ja l-ja" lang="ja">分解して、見てみる。</h2>
         <h2 class="h-en l-en" lang="en">Let’s take it apart.</h2>
         <p class="hint"><span class="pill" aria-hidden="true"></span><span>
@@ -396,19 +400,19 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
         <p class="l-en" lang="en">One runs straight through, one at an angle. Adjusting string length is easy.</p>
       </div>
     </section>
-    <section class="cap" data-from="150" data-to="161" data-step="07" data-stop="161" data-next-ja="V2を手に入れる" data-next-en="Get the V2">
+    <section class="cap" data-from="150" data-to="161" data-step="07" data-stop="161" data-next-ja="3つのラインから選ぶ" data-next-en="Pick one of three lines">
       <div class="inner">
         <p class="eyebrow">Get PLAKEN</p>
-        <h2 class="h-en">HOLLOW Frame V2</h2>
-        <p class="price l-ja" lang="ja">¥5,500（剣のみ）</p>
-        <p class="price l-en" lang="en">¥5,500 (ken only)</p>
+        <h2 class="h-en">AXIS&nbsp;· FOCUS&nbsp;· ELLIPSE</h2>
+        <p class="price l-ja" lang="ja">中の構造は3本とも同じ。各 ¥5,500（剣のみ）</p>
+        <p class="price l-en" lang="en">The same structure inside all three. ¥5,500 each (ken only)</p>
         <div class="buy l-ja">
-          <a class="btn solid" href="https://edex-kendama.stores.jp/">購入する</a>
-          <a class="btn line" href="https://fanken.jp/collections/edex-kendama-%E6%97%A5%E6%9C%AC">海外の方は FANKEN へ</a>
+          <a class="btn solid" href="plaken.html" data-lineup>3つのラインを見る</a>
+          <a class="btn line" href="https://edex-kendama.stores.jp/">購入する</a>
         </div>
         <div class="buy l-en">
-          <a class="btn solid" href="https://fanken.jp/en/collections/edex-kendama-%E6%97%A5%E6%9C%AC">Buy at FANKEN</a>
-          <a class="btn line" href="https://edex-kendama.stores.jp/">In Japan? Our STORES shop</a>
+          <a class="btn solid" href="plaken.html" data-lineup>See the three lines</a>
+          <a class="btn line" href="https://fanken.jp/en/collections/edex-kendama-%E6%97%A5%E6%9C%AC">Buy at FANKEN</a>
         </div>
       </div>
     </section>
@@ -438,7 +442,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
         <div class="card-body">
           <div class="meta">
             <p class="date"><span class="l-ja">2026.09.19 発売</span><span class="l-en">RELEASED 2026.09.19</span></p>
-            <span class="badge solid">LATEST</span>
+            <span class="badge line"><span class="l-ja">現在は AXIS</span><span class="l-en">NOW AXIS</span></span>
           </div>
           <h3>HOLLOW Frame V2</h3>
           <ul class="feats l-ja" lang="ja">
@@ -458,7 +462,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
             <div><dt class="l-ja">皿胴の幅</dt><dt class="l-en">SARADO WIDTH</dt><dd>75 mm</dd></div>
             <div><dt class="l-ja">中皿の最大径</dt><dt class="l-en">BASE CUP (MAX)</dt><dd>42 mm</dd></div>
             <div><dt class="l-ja">けん先の幅</dt><dt class="l-en">SPIKE WIDTH</dt><dd>10 mm</dd></div>
-            <div class="full"><dt class="l-ja">重さ</dt><dt class="l-en">WEIGHT</dt><dd><span class="l-ja">約83–84 g</span><span class="l-en">≈ 83–84 g</span></dd></div>
+            <div class="full"><dt class="l-ja">重さ</dt><dt class="l-en">WEIGHT</dt><dd><span class="l-ja">約83 g</span><span class="l-en">≈ 83 g</span></dd></div>
           </dl>
           <a class="btn line wide" href="#structure"><span class="l-ja">V2の構造を見る ↑</span><span class="l-en">See inside V2 ↑</span></a>
           <div class="l-ja">
@@ -467,8 +471,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
           <div class="l-en">
             <a class="btn solid wide" href="https://fanken.jp/en/collections/edex-kendama-%E6%97%A5%E6%9C%AC">Buy at FANKEN</a>
           </div>
-          <p class="small l-ja" lang="ja">STORESで購入できます。¥5,500（剣のみ）。</p>
-          <p class="small l-en" lang="en">Sold through FANKEN, our partner shop in Japan. Inside Japan you can also use <a href="https://edex-kendama.stores.jp/">our STORES shop</a>.</p>
+          <p class="small l-ja" lang="ja">V2は PLAKEN AXIS に名前を変えて続いています。形・重さ・遊び心地は同じです。<a href="plaken.html#axis">AXISを見る</a></p>
+          <p class="small l-en" lang="en">V2 carries on as PLAKEN AXIS, with the same shape, weight and feel. <a href="plaken.html#axis">See AXIS</a></p>
         </div>
       </article>
 
@@ -537,7 +541,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     </div>
     <div class="shops l-ja">
       <a class="shop solid" href="https://edex-kendama.stores.jp/">
-        <span class="txt"><span class="where l-ja">日本国内</span><span class="name">EDEX Store</span><span class="desc">V2 ¥5,500（剣のみ）· 国内発送のみ</span></span>
+        <span class="txt"><span class="where l-ja">日本国内</span><span class="name">EDEX Store</span><span class="desc">AXIS・FOCUS・ELLIPSE 各¥5,500（剣のみ）· FOCUS・ELLIPSEは11/23から · 国内発送のみ</span></span>
         <span class="arrow" aria-hidden="true">→</span>
       </a>
       <a class="shop line" href="https://fanken.jp/collections/edex-kendama-%E6%97%A5%E6%9C%AC">
@@ -607,7 +611,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   document.head.appendChild(s);
   var kinds = [[/stores\.jp/, 'buy-stores'], [/fanken\.jp/, 'buy-fanken'], [/instagram\.com/, 'follow-instagram'], [/^#spec$/, 'open-spec'],
                [/\/\/(www\.)?x\.com/, 'follow-x'], [/note\.com/, 'note'], [/^mailto:/, 'contact'],
-               [/tap-lab\.html/, 'open-taplab'], [/v1\.html/, 'open-v1'], [/orilab\.jp/, 'buy-apparel']];
+               [/tap-lab\.html/, 'open-taplab'], [/v1\.html/, 'open-v1'], [/orilab\.jp/, 'buy-apparel'], [/plaken\.html/, 'open-lineup']];
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a) return;
@@ -634,6 +638,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     Array.prototype.forEach.call(document.querySelectorAll('[data-label-' + l + ']'), function (el) { el.setAttribute('aria-label', el.getAttribute('data-label-' + l)); });
     /* open Tap Lab in the same language as the site */
     Array.prototype.forEach.call(document.querySelectorAll('[data-taplab]'), function (el) { el.setAttribute('href', 'tap-lab.html#' + l); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-lineup]'), function (el) { el.setAttribute('href', 'plaken.html#' + l); });
     /* the V1 archive page follows the same language */
     Array.prototype.forEach.call(document.querySelectorAll('[data-v1link]'), function (el) { el.setAttribute('href', 'v1.html#' + l); });
   }
