@@ -27,6 +27,8 @@
   if (!lang) { var L = (navigator.languages && navigator.languages[0]) || navigator.language || ''; lang = /^ja\b/i.test(L) ? 'ja' : 'en'; }
   document.documentElement.setAttribute('data-lang', lang);
   document.documentElement.lang = lang;
+  /* launch switch: from 2026-11-23 00:00 JST (15:00 UTC on the 22nd) the hero shows the three lines */
+  if (Date.now() >= Date.UTC(2026, 10, 22, 15, 0, 0)) document.documentElement.classList.add('after-1123');
 })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -94,6 +96,11 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .hero .wrap { padding-block: 8px 72px; display: flex; flex-wrap: wrap; align-items: center; gap: 32px; }
 .hero-photo { flex: 1 1 320px; min-width: 0; }
 .hero-photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; background: #000; -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, #000 62%, transparent 100%); }
+/* launch switch (class set in the head script): .pre-1123 shows until then, .post-1123 from then on */
+html:not(.after-1123) .post-1123, html.after-1123 .pre-1123 { display: none !important; }
+html.after-1123 .hero-photo { flex-basis: 100%; }
+.hero-photo a { display: block; }
+.hero-photo img.trio { aspect-ratio: 1600 / 970; -webkit-mask-image: none; mask-image: none; }  /* the photo already fades into the page colour */
 .hero-text { flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
 .hero h1 { margin: 0; }
 .newline { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px 0 6px; border: 1px solid var(--line-2); border-radius: 2px; color: var(--fg); text-decoration: none; font-size: 14px; line-height: 1.4; }
@@ -292,7 +299,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 <section class="hero" aria-labelledby="hero-title">
   <div class="wrap">
     <div class="hero-photo">
-      <img src="img/axis-hero.webp" width="1080" height="1440" data-alt-ja="PLAKEN AXIS（新デザイン）。黒背景" data-alt-en="PLAKEN AXIS in its new design, on a black background" alt="">
+      <a class="post-1123" href="plaken.html" data-lineup><img class="trio" src="img/plaken/hero-trio.webp" width="1600" height="970" loading="lazy" data-alt-ja="PLAKEN AXIS・FOCUS・ELLIPSE の3本を並べた写真" data-alt-en="PLAKEN AXIS, FOCUS and ELLIPSE side by side" alt=""></a>
+      <img class="pre-1123" src="img/axis-hero.webp" width="1080" height="1440" loading="lazy" data-alt-ja="PLAKEN AXIS（新デザイン）。黒背景" data-alt-en="PLAKEN AXIS in its new design, on a black background" alt="">
     </div>
     <div class="hero-text">
       <a class="newline" href="plaken.html" data-lineup><span class="badge solid">NEW</span><span><span class="l-ja">11/23 FOCUS・ELLIPSE 発売、AXISは新デザインに →</span><span class="l-en">23 Nov: FOCUS and ELLIPSE are out, and AXIS gets a new look →</span></span></a>
@@ -541,7 +549,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
     </div>
     <div class="shops l-ja">
       <a class="shop solid" href="https://edex-kendama.stores.jp/">
-        <span class="txt"><span class="where l-ja">日本国内</span><span class="name">EDEX Store</span><span class="desc">AXIS・FOCUS・ELLIPSE 各¥5,500（剣のみ）· FOCUS・ELLIPSEは11/23から · 国内発送のみ</span></span>
+        <span class="txt"><span class="where l-ja">日本国内</span><span class="name">EDEX Store</span><span class="desc">AXIS・FOCUS・ELLIPSE 各¥5,500（剣のみ）<span class="pre-1123">· FOCUS・ELLIPSEは11/23から </span>· 国内発送のみ</span></span>
         <span class="arrow" aria-hidden="true">→</span>
       </a>
       <a class="shop line" href="https://fanken.jp/collections/edex-kendama-%E6%97%A5%E6%9C%AC">
